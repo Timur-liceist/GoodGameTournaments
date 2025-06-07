@@ -8,7 +8,7 @@ urlpatterns = [
     path(
         "",
         news.views.AllNewsView.as_view(),
-        name="all_news",
+        name="general_news",
     ),
     path(
         "create",

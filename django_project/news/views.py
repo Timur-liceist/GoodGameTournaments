@@ -3,20 +3,20 @@ from django.shortcuts import render
 from django.views import View
 
 from news.forms import NewsForm
-from news.models import NewsModel
+from news.models import GeneralNewsModel
 
 
 class AllNewsView(View):
     def get(self, request):
-        all_news = NewsModel.objects.all()
+        general_news = GeneralNewsModel.objects.all()
 
         context = {
-            "all_news": all_news,
+            "general_news": general_news,
         }
 
         return render(
             request,
-            "news/all_news.html",
+            "news/general_news.html",
             context=context,
         )
 

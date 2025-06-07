@@ -1,4 +1,5 @@
 import django.core.validators
+from core.models import AbstractNews
 from django.db import models
 from mdeditor.fields import MDTextField
 from users.models import UserModel
@@ -97,3 +98,26 @@ class TournamentModel(models.Model):
 
     def __str__(self):
         return f"'{self.title}' by '{self.owner.username}'"
+
+
+class TournamentNews(AbstractNews):
+    tournament = models.ForeignKey(
+        TournamentModel,
+        verbose_name="турнир",
+        on_delete=models.CASCADE,
+        related_name="news_by_tournament",
+    )
+    author = models.ForeignKey(
+        UserModel,
+        verbose_name="автор",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="tournament_news_by_user",
+    )
+
+    class Meta:
+        verbose_name = "новость турнира"
+        verbose_name_plural = "новости турниров"
+
+    def __str__(self):
+        return f"{self.title} ({self.tournament.name})"

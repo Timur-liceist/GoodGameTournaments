@@ -39,7 +39,7 @@ class RegistrationView(View):
 
             new_user.save()
 
-            return redirect("news:all_news")
+            return redirect("news:general_news")
 
         context = {
             "form": form,
@@ -86,7 +86,7 @@ class LoginView(View):
                 user.is_active = True
                 login(request, user)
                 return redirect(
-                    "news:all_news",
+                    "news:general_news",
                 )
 
             form.add_error(None, "Неверные данные для входа")
