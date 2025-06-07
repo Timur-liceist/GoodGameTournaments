@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "petprojectdjango"
+version = "0.1.0"
+description = ""
+authors = ["timkaoch <ochilov-timka@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.1.4"
+ruff = "^0.8.2"
+gunicorn = "^23.0.0"
+django-mdeditor = "^0.1.20"
+markdown = "^3.7"
+djangorestframework = "^3.15.2"
+
+[tool.ruff]
+line-length = 79
+indent-width = 4
+exclude = [
+    "migrations",
+    "venv",
+]
+[tool.ruff.lint.per-file-ignores]
+# Укажите путь к файлу и коды ошибок для игнорирования
+"django_project/manage.py" = ["INP001"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["D", "ANN", "EXE002", "RUF012", "RUF001"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+

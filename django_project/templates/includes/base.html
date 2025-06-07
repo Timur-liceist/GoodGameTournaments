@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block title %}{% endblock %}</title>
+    {% comment %} <link
+      href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+      rel="stylesheet"
+      id="bootstrap-css"
+    /> {% endcomment %}
+    
+    <link href="{% static 'styles/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'styles/navbar.css' %}" rel="stylesheet" />
+    <link href="{% static 'styles/blocks.css' %}" rel="stylesheet" />
+    <link href="{% static 'styles/pagination.css' %}" rel="stylesheet" />
+    <style>
+      {% comment %} @font-face {
+        font-family: "TF2 Font";
+        src: url('{% static "fonts/tf2_fonts.ttf" %}') format("truetype");
+        font-weight: normal;
+        font-style: normal;
+      } {% endcomment %}
+      form input {
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background-image: url('{% static "images/pattern-trio-pentagons.png" %}');
+        background-repeat: repeat;
+        background-width: 5px;
+        {% comment %} background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        margin: 10px;
+        padding: 0;
+        font-family: "TF2 Font", sans-serif; {% endcomment %}
+      }
+      .no-tf2-font {
+        font-family: Arial, sans-serif; /* Это отменяет шрифт родительского элемента */
+      }
+
+      footer {
+        background-color: #f0f0f0;
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 20px;
+      }
+
+      .dropdown-menu-left {
+        right: 0;
+        left: auto;
+      }
+      .dropdown-item {
+        color: white;
+      }
+      .dropdown-item:hover {
+        color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar navbar-icon-top navbar-expand-lg navbar-dark bg-dark">
+        <img width="65px" height="auto" src="{% static 'images/logo.png' %}" />
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <!-- Left navbar -->
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/">
+                <i class="fa fa-home"></i>
+                Home
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+          </ul>
+
+          <!-- Right navbar -->
+          <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                {{ user.email }}
+              </a>
+              <div
+                class="dropdown-menu dropdown-menu-left"
+                aria-labelledby="navbarDropdown"
+                style="background-color: #343a40; border: 2px solid #cc4848"
+              >
+                <a class="dropdown-item" href="#">Profile</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'users:logout' %}"
+                  >Выйти из аккаунта</a
+                >
+              </div>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'users:login' %}">
+                <i class="fa fa-user"></i>
+                Войти
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <main style="place-items: center">{% block content %}{% endblock %}</main>
+
+    <!-- Подключение jQuery и Bootstrap JS -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  </body>
+</html>

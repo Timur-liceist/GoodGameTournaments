@@ -1,0 +1,55 @@
+{% extends "includes/base.html" %} {% block title %}Вход{% endblock %}
+{% block content %}
+
+<div
+  class="card-container container mt-5"
+  style="color: white; border: 2px solid #cc4848; padding: 20px; margin: 70px"
+>
+  <h1 class="text-center mb-4">Вход</h1>
+  <form method="post">
+    {% csrf_token %} {% if form.non_fields.errors %}
+    <div class="alert alert-danger">{{ form.non_fields.errors }}</div>
+    {% endif %}
+
+    <!-- Поле email_or_username -->
+    <div class="mb-3">
+      <label for="{{ form.email_or_username.id_for_label }}" class="form-label"
+        >{{ form.email_or_username.label }}</label
+      >
+      {{ form.email_or_username }} {% if form.email_or_username.errors %}
+      <div class="alert alert-danger">{{ form.email_or_username.errors }}</div>
+      {% endif %}
+    </div>
+
+    <!-- Поле password -->
+    <div class="mb-3">
+      <label for="{{ form.password.id_for_label }}" class="form-label"
+        >{{ form.password.label }}</label
+      >
+      {{ form.password }} {% if form.password.errors %}
+      <div class="alert alert-danger">{{ form.password.errors }}</div>
+      {% endif %}
+    </div>
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Кнопка отправки -->
+    <button type="submit" class="btn w-100 card-button">Войти</button>
+  </form>
+  <form action="{% url 'users:registration' %}">
+    <button
+      type="submit"
+      class="btn card-button w-100"
+      style="color: white; margin-top: 5px"
+    >
+      Нет аккаунта?
+    </button>
+  </form>
+</div>
+
+{% endblock %}

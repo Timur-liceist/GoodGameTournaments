@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Турнирная сетка</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        
+        .bracket {
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+        
+        .round {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            min-width: 200px;
+            margin: 0 10px;
+        }
+        
+        .match {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+        }
+        
+        .team {
+            padding: 5px;
+            margin: 2px 0;
+            border-radius: 3px;
+            background-color: #fff;
+        }
+        
+        .winner {
+            background-color: #d4edda;
+            font-weight: bold;
+        }
+        
+        .connector {
+            position: relative;
+        }
+        
+        .connector::after {
+            content: "";
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            width: 20px;
+            height: 2px;
+            background-color: #333;
+        }
+        
+        .connector::before {
+            content: "";
+            position: absolute;
+            right: -10px;
+            top: 25%;
+            width: 2px;
+            height: 50%;
+            background-color: #333;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .final .match {
+            background-color: #e2f0fd;
+        }
+    </style>
+</head>
+<body>
+    <h2>Турнирная сетка</h2>
+    <div id="bracket"></div>
+
+    <script>
+        // Данные для турнирной сетки
+        const tournamentData = {
+            rounds: [
+                {
+                    name: "1/8 финала",
+                    matches: [
+                        { team1: "Команда A", score1: 2, team2: "Команда B", score2: 1, winner: 1 },
+                        { team1: "Команда C", score1: 0, team2: "Команда D", score2: 3, winner: 2 },
+                        { team1: "Команда E", score1: 1, team2: "Команда F", score2: 1, winner: 1 },
+                        { team1: "Команда G", score1: 4, team2: "Команда H", score2: 2, winner: 1 }
+                    ]
+                },
+                {
+                    name: "1/4 финала",
+                    matches: [
+                        { team1: "Команда A", score1: 3, team2: "Команда D", score2: 2, winner: 1 },
+                        { team1: "Команда E", score1: 0, team2: "Команда G", score2: 2, winner: 2 }
+                    ]
+                },
+                {
+                    name: "1/2 финала",
+                    matches: [
+                        { team1: "Команда A", score1: 1, team2: "Команда G", score2: 0, winner: 1 }
+                    ]
+                },
+                {
+                    name: "Финал",
+                    matches: [
+                        { team1: "Команда A", score1: 2, team2: "Команда H", score2: 1, winner: 1 }
+                    ]
+                }
+            ]
+        };
+
+        // Создаем турнирную сетку
+        const bracket = d3.select("#bracket")
+            .append("div")
+            .attr("class", "bracket");
+
+        // Добавляем раунды
+        const rounds = bracket.selectAll(".round")
+            .data(tournamentData.rounds)
+            .enter()
+            .append("div")
+            .attr("class", d => `round ${d.name.includes("Финал") ? "final" : ""}`);
+
+        // Добавляем заголовки раундов
+        rounds.append("h3")
+            .text(d => d.name);
+
+        // Добавляем матчи в каждый раунд
+        const matches = rounds.selectAll(".match")
+            .data(d => d.matches)
+            .enter()
+            .append("div")
+            .attr("class", "match");
+
+        // Добавляем команды в матчи
+        matches.each(function(d) {
+            const match = d3.select(this);
+            
+            // Команда 1
+            match.append("div")
+                .attr("class", `team ${d.winner === 1 ? "winner" : ""}`)
+                .html(`${d.team1} <span class="score">${d.score1}</span>`);
+            
+            // Команда 2
+            match.append("div")
+                .attr("class", `team ${d.winner === 2 ? "winner" : ""}`)
+                .html(`${d.team2} <span class="score">${d.score2}</span>`);
+            
+            // Добавляем соединители, кроме финала
+            if (!d3.select(this.parentNode).classed("final")) {
+                d3.select(this).classed("connector", true);
+            }
+        });
+    </script>
+</body>
+</html>

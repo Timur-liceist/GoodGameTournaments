@@ -1,0 +1,66 @@
+{% extends "includes/base.html" %} {% block title %}Создание новости 
+{% endblock %} {% block content %} {% load markdown_filters %}
+<style>
+  table {
+    border-collapse: collapse; /* Слияние границ ячеек */
+    width: 100%; /* Таблица будет занимать всю ширину */
+  }
+
+  table,
+  th,
+  td {
+    border: 2px solid #cc4848; /* Цвет и толщина обводки для таблицы и ячеек */
+  }
+
+  th,
+  td {
+    padding: 8px; /* Отступы внутри ячеек */
+  }
+</style>
+{% for news in all_news %}
+<div
+  class="card-container container mt-5"
+  style="color: white; border: 2px solid #cc4848; padding: 20px; margin: 70px"
+>
+  <div class="card-header">
+    <span align="left">RusikToo</span>
+    <span class="date" align="right">2025-02-19 14:30</span>
+  </div>
+  <div class="no-tf2-font">
+    <h1>{{ news.title }}</h1>
+    <hr />
+    <p>{{ news.content | markdown | safe }}</p>
+  </div>
+
+  <div class="card-footer">
+    <button class="card-button" onclick="likePost()">
+      👍 <span id="like-count">0</span>
+    </button>
+    <button class="card-button" onclick="dislikePost()">
+      👎 <span id="dislike-count">0</span>
+    </button>
+  </div>
+</div>
+{% empty %}
+<div
+  class="card-container container mt-5"
+  style="color: white; border: 2px solid #cc4848; padding: 20px; margin: 70px"
+>
+  <h1 align="center">Нет новостей</h1>
+</div>
+
+{% endfor %}
+<!-- Start Pagination -->
+<div class="pagination-container">
+  <ul class="pagination">
+    <li><a href="#0">&lt;</a></li>
+    <li><a class="active" href="#0">1</a></li>
+    <li><a href="#0">2</a></li>
+    <li><a href="#0">3</a></li>
+    <li><a href="#0">4</a></li>
+    <li><a href="#0">&gt;</a></li>
+  </ul>
+</div>
+<!-- End Pagination -->
+{% endblock %}
+о

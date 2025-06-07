@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивная турнирная сетка</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        
+        #whiteboard {
+            width: 100vw;
+            height: 100vh;
+            cursor: grab;
+        }
+        
+        #whiteboard:active {
+            cursor: grabbing;
+        }
+        
+        .match {
+            position: absolute;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            min-width: 150px;
+        }
+        
+        .team {
+            padding: 5px;
+            margin: 3px 0;
+            border-radius: 4px;
+        }
+        
+        .winner {
+            background-color: #d4edda;
+            font-weight: bold;
+        }
+        
+        .round-label {
+            position: absolute;
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        .connector {
+            position: absolute;
+            background-color: #3498db;
+        }
+        
+        .match-rect {
+            fill: white;
+            stroke: #3498db;
+            stroke-width: 2;
+            rx: 8;
+            ry: 8;
+        }
+        
+        .final-rect {
+            fill: #e2f0fd;
+            stroke: #3498db;
+            stroke-width: 2;
+            rx: 8;
+            ry: 8;
+        }
+        
+        .team-text {
+            font-size: 12px;
+        }
+        
+        .winner-text {
+            font-weight: bold;
+            fill: #28a745;
+        }
+        
+        .connector-line {
+            fill: none;
+            stroke: #3498db;
+            stroke-width: 2;
+        }
+    </style>
+</head>
+<body>
+    <div id="whiteboard"></div>
+
+    <script>
+        // Данные для турнирной сетки с явными связями
+        const tournamentData = {
+            rounds: [
+                {
+                    name: "1/8 финала",
+                    matches: [
+                        { id: "m1", team1: "Команда A", score1: 2, team2: "Команда B", score2: 1, winner: 1, next: "m5" },
+                        { id: "m2", team1: "Команда C", score1: 0, team2: "Команда D", score2: 3, winner: 2, next: "m5" },
+                        { id: "m3", team1: "Команда E", score1: 1, team2: "Команда F", score2: 1, winner: 1, next: "m6" },
+                        { id: "m4", team1: "Команда G", score1: 4, team2: "Команда H", score2: 2, winner: 1, next: "m6" }
+                    ]
+                },
+                {
+                    name: "1/4 финала",
+                    matches: [
+                        { id: "m5", team1: "Команда A", score1: 3, team2: "Команда D", score2: 2, winner: 1, next: "m7" },
+                        { id: "m6", team1: "Команда E", score1: 0, team2: "Команда G", score2: 2, winner: 2, next: "m7" }
+                    ]
+                },
+                {
+                    name: "1/2 финала",
+                    matches: [
+                        { id: "m7", team1: "Команда A", score1: 1, team2: "Команда G", score2: 0, winner: 1, next: "m8" }
+                    ]
+                },
+                {
+                    name: "Финал",
+                    matches: [
+                        { id: "m8", team1: "Команда A", score1: 2, team2: "Команда H", score2: 1, winner: 1 }
+                    ]
+                }
+            ]
+        };
+
+        // Настройки визуализации
+        const whiteboard = d3.select("#whiteboard");
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        // Создаем SVG контейнер
+        const svg = whiteboard.append("svg")
+            .attr("width", width)
+            .attr("height", height);
+        
+        // Создаем группу для всего содержимого
+        const content = svg.append("g")
+            .attr("class", "content");
+        
+        // Переменные для перемещения и масштабирования
+        let isDragging = false;
+        let startPos = { x: 0, y: 0 };
+        let transform = { x: 0, y: 0, k: 1 };
+        
+        // Обработчики событий для перемещения
+        whiteboard.on("mousedown", function(event) {
+            if (event.button === 0) { // Левая кнопка мыши
+                isDragging = true;
+                startPos = { x: event.clientX, y: event.clientY };
+                whiteboard.style("cursor", "grabbing");
+                event.preventDefault();
+            }
+        });
+        
+        window.addEventListener("mousemove", function(event) {
+            if (isDragging) {
+                const dx = event.clientX - startPos.x;
+                const dy = event.clientY - startPos.y;
+                
+                transform.x += dx;
+                transform.y += dy;
+                
+                updateTransform();
+                
+                startPos = { x: event.clientX, y: event.clientY };
+                event.preventDefault();
+            }
+        });
+        
+        window.addEventListener("mouseup", function(event) {
+            if (event.button === 0 && isDragging) {
+                isDragging = false;
+                whiteboard.style("cursor", "grab");
+                event.preventDefault();
+            }
+        });
+        
+        // Обработчик масштабирования колесиком мыши
+        whiteboard.on("wheel", function(event) {
+            event.preventDefault();
+            
+            const scaleFactor = event.deltaY > 0 ? 0.8 : 1.2;
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+            
+            // Преобразуем координаты мыши в координаты SVG
+            const point = svg.node().createSVGPoint();
+            point.x = mouseX;
+            point.y = mouseY;
+            const svgPoint = point.matrixTransform(svg.node().getScreenCTM().inverse());
+            
+            // Применяем масштабирование
+            transform.k *= scaleFactor;
+            transform.x = svgPoint.x - (svgPoint.x - transform.x) * scaleFactor;
+            transform.y = svgPoint.y - (svgPoint.y - transform.y) * scaleFactor;
+            
+            // Ограничиваем масштаб
+            transform.k = Math.min(Math.max(0.5, transform.k), 3);
+            
+            updateTransform();
+        });
+        
+        function updateTransform() {
+            content.attr("transform", `translate(${transform.x},${transform.y}) scale(${transform.k})`);
+        }
+        
+        // Создаем турнирную сетку
+        createBracket();
+        
+        function createBracket() {
+            const roundSpacing = 250;
+            const matchSpacing = 120;
+            const matchWidth = 180;
+            const matchHeight = 80;
+            
+            // Собираем все матчи в один объект для удобства доступа
+            const allMatches = {};
+            tournamentData.rounds.forEach(round => {
+                round.matches.forEach(match => {
+                    allMatches[match.id] = match;
+                });
+            });
+            
+            // Создаем раунды и матчи
+            tournamentData.rounds.forEach((round, roundIndex) => {
+                const roundX = roundIndex * roundSpacing + 100;
+                
+                // Добавляем название раунда
+                content.append("text")
+                    .attr("class", "round-label")
+                    .attr("x", roundX)
+                    .attr("y", 50)
+                    .text(round.name);
+                
+                // Создаем матчи в раунде
+                round.matches.forEach((match, matchIndex) => {
+                    const matchY = height / 2 - (round.matches.length * matchSpacing) / 2 + 
+                                 matchIndex * matchSpacing + 100;
+                    
+                    // Сохраняем позиции матча для соединений
+                    match.x = roundX;
+                    match.y = matchY;
+                    
+                    // Создаем контейнер матча
+                    const matchGroup = content.append("g")
+                        .attr("class", "match")
+                        .attr("transform", `translate(${roundX},${matchY})`);
+                    
+                    // Добавляем прямоугольник матча
+                    matchGroup.append("rect")
+                        .attr("width", matchWidth)
+                        .attr("height", matchHeight)
+                        .attr("class", roundIndex === tournamentData.rounds.length - 1 ? "final-rect" : "match-rect");
+                    
+                    // Добавляем команды
+                    const team1 = matchGroup.append("text")
+                        .attr("class", "team-text")
+                        .attr("x", 10)
+                        .attr("y", 25)
+                        .text(`${match.team1} ${match.score1}`);
+                    
+                    const team2 = matchGroup.append("text")
+                        .attr("class", "team-text")
+                        .attr("x", 10)
+                        .attr("y", 45)
+                        .text(`${match.team2} ${match.score2}`);
+                    
+                    // Выделяем победителя
+                    if (match.winner === 1) {
+                        team1.attr("class", "team-text winner-text");
+                    } else {
+                        team2.attr("class", "team-text winner-text");
+                    }
+                });
+            });
+            
+            // Создаем соединения между матчами
+            tournamentData.rounds.slice(0, -1).forEach(round => {
+                round.matches.forEach(match => {
+                    if (match.next) {
+                        const nextMatch = allMatches[match.next];
+                        if (nextMatch) {
+                            const startX = match.x + matchWidth;
+                            const startY = match.y + (match.winner === 1 ? 25 : 45);
+                            const endX = nextMatch.x;
+                            const endY = nextMatch.y + 40;
+                            
+                            // Вертикальная линия от победителя
+                            content.append("path")
+                                .attr("class", "connector-line")
+                                .attr("d", `M${startX},${startY} L${startX + 20},${startY}`);
+                            
+                            // Горизонтальная соединительная линия
+                            content.append("path")
+                                .attr("class", "connector-line")
+                                .attr("d", `M${startX + 20},${startY} 
+                                           L${startX + 20},${endY} 
+                                           L${endX - 10},${endY}`);
+                            
+                            // Вертикальная линия к следующему матчу
+                            content.append("path")
+                                .attr("class", "connector-line")
+                                .attr("d", `M${endX - 10},${endY} L${endX},${endY}`);
+                        }
+                    }
+                });
+            });
+            
+            // Центрируем сетку при загрузке
+            const totalWidth = tournamentData.rounds.length * roundSpacing;
+            const totalHeight = Math.max(...tournamentData.rounds.map(r => r.matches.length)) * matchSpacing;
+            transform.x = width / 2 - totalWidth / 2;
+            transform.y = height / 2 - totalHeight / 2;
+            updateTransform();
+        }
+    </script>
+</body>
+</html>

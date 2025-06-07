@@ -1,0 +1,15 @@
+{% extends "includes/base.html" %} {% block title %}Создание новости
+{% endblock %} {% block content %}
+
+<div
+  class="card-container container mt-5"
+  style="color: white; border: 2px solid #cc4848; padding: 20px; margin: 70px"
+>
+  <h1 class="text-center mb-4">Создание новости</h1>
+  <form method="post">
+    {% csrf_token %} {{ form.media }} {{ form.as_p }}
+    <button type="submit" class="btn btn-primary w-100">Создать</button>
+  </form>
+</div>
+
+{% endblock %}

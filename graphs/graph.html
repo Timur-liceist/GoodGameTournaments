@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3.js Graph Visualization</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        svg {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <svg viewBox="0 0 1500 1500"></svg>
+
+    <script>
+        let bigCircle = "M-100,0a100,100,0,1,1,0,0.001z";
+        let smallCircle = "M-50,0a50,50,0,1,1,0,0.001z";
+        let rect = "m-50 -25 h100 v50 h-100z";
+
+        let graph = {
+          nodes: [
+          {id:1, shape:bigCircle, color:'red'},
+          {id:11, shape:smallCircle, color:'lightgray'}, 
+          {id:12, shape:smallCircle, color:'lightgray'},
+          {id:13, shape:smallCircle, color:'lightgray'},
+          {id:111}, {id:112},{id:113},
+          {id:121}, {id:122},{id:123},
+          {id:131}, {id:132},{id:133}
+          ],
+          links: [
+          {source:1, target:11},
+          {source:1, target:12},
+          {source:1, target:13},
+          {source:11, target:111},
+          {source:11, target:112},
+          {source:11, target:113},
+          {source:12, target:121},
+          {source:12, target:122},
+          {source:12, target:123},
+          {source:13, target:131},
+          {source:13, target:132},
+          {source:13, target:133},
+          ]
+        };
+
+        var svg = d3.select("svg");
+
+        var simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(d => d.id))
+            .force("charge", d3.forceManyBody().strength(-5000))
+            .force("center", d3.forceCenter(750, 750));
+
+        var link = svg.append("g")
+            .selectAll("line")
+            .data(graph.links)
+            .enter()
+            .append("line")
+            .attr("stroke", 'red');
+
+        var node = svg.append("g")
+            .selectAll("path")
+            .data(graph.nodes)
+            .enter()
+              .append("path")
+              .attr("d", d => d.shape || rect)
+              .attr("fill", d => d.color || "wheat")
+              .attr("stroke", 'black')
+              .call(d3.drag()
+                  .on("start", dragstarted)
+                  .on("drag", dragged)
+                  .on("end", dragended));
+
+          simulation.nodes(graph.nodes)
+              .on("tick", ticked);
+
+          simulation.force("link")
+              .links(graph.links);
+
+        function ticked() {
+          link.attr("x1", d => d.source.x)
+              .attr("y1", d => d.source.y)
+              .attr("x2", d => d.target.x)
+              .attr("y2", d => d.target.y);
+
+          node.attr("transform", d => `translate(${d.x},${d.y})`)
+        }
+
+        function dragstarted(d) {
+          if (!d3.event.active) 
+            simulation.alphaTarget(1).restart();
+          d.fx = d.x;
+          d.fy = d.y;
+        }
+
+        function dragged(d) {
+          d.fx = d3.event.x;
+          d.fy = d3.event.y;
+        }
+
+        function dragended(d) {
+          if (!d3.event.active) 
+            simulation.alphaTarget(0);
+          d.fx = null;
+          d.fy = null;
+        }
+
+        function rnd(base){
+          return Math.floor(Math.random() * base);
+        }
+    </script>
+</body>
+</html>
