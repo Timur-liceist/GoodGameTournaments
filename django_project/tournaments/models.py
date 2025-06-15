@@ -2,6 +2,7 @@ import django.core.validators
 from core.models import AbstractNews
 from django.db import models
 from mdeditor.fields import MDTextField
+from teams.models import TeamModel
 from users.models import UserModel
 
 
@@ -121,3 +122,40 @@ class TournamentNews(AbstractNews):
 
     def __str__(self):
         return f"{self.title} ({self.tournament.name})"
+
+
+class RequestTeamForTournamentModel(models.Model):
+    CHOICES_STATUS = [
+        ("pending", "Ожидается"),
+        ("accepted", "Принята"),
+        ("rejected", "Отклонена"),
+        ("expired", "Просрочена"),
+    ]
+    team = models.ForeignKey(
+        TeamModel,
+        on_delete=models.CASCADE,
+        verbose_name="команда",
+    )
+    tournament = models.ForeignKey(
+        TournamentModel,
+        on_delete=models.CASCADE,
+        verbose_name="турнир",
+    )
+    created_at = models.DateTimeField(
+        verbose_name="дата и время отправки",
+        auto_now_add=True,
+    )
+    status = models.CharField(
+        verbose_name="статус",
+        max_length=32,
+        choices=CHOICES_STATUS,
+        default="pending",
+    )
+
+    class Meta:
+        verbose_name = "заявка команды на участие в турнире"
+        verbose_name_plural = "заявки команды на участие в турнире"
+
+    def __str__(self):
+        return f"Request {self.team.name} ({self.tournament.name})"
+

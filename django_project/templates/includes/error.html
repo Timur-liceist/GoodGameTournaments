@@ -1,0 +1,9 @@
+{% extends "includes/base.html" %} {% block title %}Создание новости 
+{% endblock %} {% block content %}
+<div class="card-container" align="center">
+    <h1>{{ error_message }}</h1>
+    <a href="{% url 'homepage' %}">
+        <button type="card-button" style="font-size: 30px" class="card-button">На главную</button>
+    </a>
+</div>
+{% endblock %}

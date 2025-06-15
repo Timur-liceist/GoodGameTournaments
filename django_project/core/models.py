@@ -17,3 +17,4 @@ class AbstractNews(models.Model):
 
     class Meta:
         abstract = True
+

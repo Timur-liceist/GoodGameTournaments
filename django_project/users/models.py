@@ -47,7 +47,7 @@ class UserModel(AbstractUser):
         verbose_name="почта",
         unique=True,
     )
-    is_pulbic_profile = models.BooleanField(
+    is_public_profile = models.BooleanField(
         verbose_name="возможность просмотра профиля другими игроками",
         default=True,
     )

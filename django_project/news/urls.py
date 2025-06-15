@@ -7,12 +7,17 @@ app_name = "news"
 urlpatterns = [
     path(
         "",
-        news.views.AllNewsView.as_view(),
+        news.views.AllGeneralNewsView.as_view(),
         name="general_news",
     ),
     path(
         "create",
-        news.views.CreateNewsView.as_view(),
+        news.views.CreateGeneralNewsView.as_view(),
         name="create_news",
+    ),
+    path(
+        "<int:news_id>/edit",
+        news.views.EditGeneralNewsView.as_view(),
+        name="edit_news",
     ),
 ]

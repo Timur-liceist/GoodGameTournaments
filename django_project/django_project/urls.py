@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 
 urlpatterns = [
     path(
@@ -25,6 +25,26 @@ urlpatterns = [
         "",
         RedirectView.as_view(url="/news/"),
         name="homepage",
+    ),
+    path(
+        "not_found",
+        TemplateView.as_view(
+            template_name="includes/error.html",
+            extra_context={
+                "error_message": "404 Not Found",
+            },
+        ),
+        name="not_found",
+    ),
+    path(
+        "forbidden",
+        TemplateView.as_view(
+            template_name="includes/error.html",
+            extra_context={
+                "error_message": "403 Forbidden",
+            },
+        ),
+        name="forbidden",
     ),
 ]
 

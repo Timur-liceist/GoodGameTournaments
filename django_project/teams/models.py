@@ -52,3 +52,36 @@ class TeamModel(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class InvitationToTeamModel(models.Model):
+    CHOICES_STATUS = [
+        ("pending", "Ожидается"),
+        ("accepted", "Принята"),
+        ("rejected", "Отклонена"),
+        ("expired", "Просрочена"),
+    ]
+    invited_user = models.ForeignKey(
+        UserModel,
+        on_delete=models.CASCADE,
+        verbose_name="пользователь",
+    )
+    team = models.ForeignKey(
+        TeamModel,
+        on_delete=models.CASCADE,
+        verbose_name="команда",
+    )
+    created_at = models.DateTimeField(
+        verbose_name="дата и время отправки",
+        auto_now_add=True,
+    )
+    status = models.CharField(
+        verbose_name="статус",
+        max_length=32,
+        choices=CHOICES_STATUS,
+        default="pending",
+    )
+
+    class Meta:
+        verbose_name = "заявка команды на участие в турнире"
+        verbose_name_plural = "заявки команды на участие в турнире"

@@ -129,7 +129,7 @@ class LoginForm(forms.Form):
 class ProfileForm(forms.ModelForm):
     username = forms.CharField(
         label="Имя пользователя",
-        widget=forms.EmailInput(
+        widget=forms.TextInput(
             attrs={
                 "class": "form-control",
                 "placeholder": "Введите ваше имя пользователя",
@@ -161,6 +161,11 @@ class ProfileForm(forms.ModelForm):
         ),
         required=False,
     )
+    is_public_profile = forms.BooleanField(
+        label="Возможность просмотра профиля другими игроками",
+        required=False,
+        widget=forms.CheckboxInput(),
+    )
 
     class Meta:
         model = UserModel
@@ -168,4 +173,5 @@ class ProfileForm(forms.ModelForm):
             "username",
             "email",
             "bio",
+            "is_public_profile",
         ]

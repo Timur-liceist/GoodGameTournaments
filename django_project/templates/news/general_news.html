@@ -23,12 +23,17 @@
   style="color: white; border: 2px solid #cc4848; padding: 20px; margin: 70px"
 >
   <div class="card-header">
-    <span align="left">RusikToo</span>
-    <span class="date" align="right">2025-02-19 14:30</span>
+    <span align="left">{{ news.author }}</span>
+    {% if request.user.is_superuser %}
+    <a href="{% url 'news:edit_news' news.id %}">
+      <button class="card-button">Редактировать</button>
+    </a>
+    {% endif %}
+    <span class="date" align="right">{{ news.created_at }}</span>
   </div>
   <div class="no-tf2-font">
     <h1>{{ news.title }}</h1>
-    <hr />
+    <hr class="card-hr" />
     <p>{{ news.content | markdown | safe }}</p>
   </div>
 

@@ -1,7 +1,7 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.hashers import check_password
 from django.db.models import Q
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 
 from users.forms import LoginForm, ProfileForm, RegistrationForm
@@ -71,6 +71,7 @@ class LoginView(View):
         if form.is_valid():
             email_or_username = form.cleaned_data["email_or_username"]
             password = form.cleaned_data["password"]
+
             query_find_user = Q(username=email_or_username) | Q(email=email_or_username)  # noqa: E501
             user = UserModel.objects.filter(query_find_user).first()
 
@@ -118,10 +119,22 @@ class NotLoginedView(View):
 
 
 class ProfileView(View):
-    def get(self, request):
-        form = ProfileForm(instance=request.user)
+    def get(self, request, user_id):
+        user_for_update = get_object_or_404(UserModel, id=user_id)
+        is_owner = False
+
+        if request.user == user_for_update or request.user.is_superuser:
+            is_owner = True
+
+        if not is_owner and not user_for_update.is_public_profile:
+            return redirect("users:not_public_profile")
+
+        form = ProfileForm(
+            instance=user_for_update,
+        )
         context = {
             "form": form,
+            "is_owner": is_owner,
         }
         return render(
             request,
@@ -129,17 +142,29 @@ class ProfileView(View):
             context=context,
         )
 
-    def post(self, request):
-        form = ProfileForm(request.POST, instance=request.user)
+    def post(self, request, user_id):
+        if not request.user.is_authenticated:
+            return redirect("users:not_logined")
+
+        user_for_update = get_object_or_404(UserModel, id=user_id)
+
+        if request.user != user_for_update and not request.user.is_superuser:
+            return redirect("forbidden")
+
+        form = ProfileForm(
+            request.POST,
+            instance=user_for_update,
+        )
 
         if form.is_valid():
             user = form.save()
             user.save()
 
-            return redirect("users:profile")
+            return redirect("users:profile", user_id=user.id)
 
         context = {
             "form": form,
+            "is_owner": True,
         }
         return render(
             request,

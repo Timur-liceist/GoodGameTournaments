@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,6 +26,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # libraries apps
+    "widget_tweaks",
     "mdeditor",
     # my apps
     "users",
@@ -34,6 +36,9 @@ INSTALLED_APPS = [
     "tournaments",
     "core",
 ]
+
+TIME_LIMITE_FOR_REQUEST_TOURNAMENT = timedelta(hours=3)
+TIME_LIMITE_FOR_REQUEST_TEAM = timedelta(hours=3)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
