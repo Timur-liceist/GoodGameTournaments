@@ -1,11 +1,12 @@
-import sqlite3
 import os
+import sqlite3
+
 
 def sqlite_to_sql(input_db, output_sql):
     try:
         # Подключаемся к базе данных
         conn = sqlite3.connect(input_db)
-        with open(output_sql, 'w', encoding='utf-8') as f:
+        with open(output_sql, "w", encoding="utf-8") as f:
             # Итерируем по всем SQL-командам из дампа
             for line in conn.iterdump():
                 f.write(f"{line}\n")

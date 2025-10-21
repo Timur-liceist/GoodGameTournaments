@@ -25,38 +25,41 @@
 </div>
 {% endif %}
 
-{% for news in general_news %}
+{% for tournament in tournaments %}
 <div
   class="card-container container mt-5"
   style="color: white; border: 2px solid #cc4848; padding: 20px; margin: 70px"
 >
   <div class="card-header">
-    <span align="left">{{ news.author }}</span>
-    {% if request.user.is_superuser %}
-    <a href="{% url 'news:edit_news' news.id %}">
-      <button class="card-button w-100">Редактировать</button>
-    </a>
-    {% endif %}
-    <span class="date" align="right">{{ news.created_at }}</span>
+    <span align="left">{{ tournament.owner }}</span>
+    <span class="date" align="right">{{ tournament.created_at }}</span>
   </div>
   <div class="no-tf2-font">
-    <h1>{{ news.title }}</h1>
+    <h1>{{ tournament.title }}</h1>
     <hr class="card-hr">
-    <p>{{ news.content | markdown | safe }}</p>
+    <div class="spoiler">
+        <button class="spoiler-toggle">Описание</button>
+        <div class="spoiler-content">
+            <p>{{ tournament.description | markdown | safe }}</p>
+        </div>
+    </div>
+    <div class="spoiler">
+        <button class="spoiler-toggle">Правила</button>
+        <div class="spoiler-content">
+            <p>{{ tournament.rules | markdown | safe }}</p>
+        </div>
+    </div>
   </div>
 
   <div class="card-footer">
-    <button class="card-button" onclick="likePost()">
-      👍 <span id="like-count">0</span>
-    </button>
-    <button class="card-button" onclick="dislikePost()">
-      👎 <span id="dislike-count">0</span>
+    <button class="card-button w-100">
+        Подать заявку
     </button>
   </div>
 </div>
 {% empty %}
 <div class="card-container container mt-5">
-  <h1 align="center">Нет новостей</h1>
+  <h1 align="center">Нет турниров</h1>
 </div>
 
 {% endfor %}

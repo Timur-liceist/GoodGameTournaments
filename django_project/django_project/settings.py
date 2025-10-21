@@ -1,4 +1,5 @@
-from datetime import timedelta
+import os
+from datetime import datetime, timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -12,9 +13,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-k!o0d)&0-744g(q-)3mwd*hb"  # noqa: S105
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "*",
+    "RusikToo.pythonanywhere.com",
+]
 
 
 INSTALLED_APPS = [
@@ -38,7 +42,63 @@ INSTALLED_APPS = [
 ]
 
 TIME_LIMITE_FOR_REQUEST_TOURNAMENT = timedelta(hours=3)
-TIME_LIMITE_FOR_REQUEST_TEAM = timedelta(hours=3)
+TIME_INTERVAL_INVITE_USER_TO_TEAM = timedelta(hours=24)
+
+# Путь к директории логов (можно изменить)
+LOG_DIR = os.path.join(BASE_DIR, "logs")
+
+# Создаем директорию, если её нет
+os.makedirs(LOG_DIR, exist_ok=True)
+
+# Формат имени файла: logs/app-2025-04-05.log
+LOG_FILE = os.path.join(
+    LOG_DIR, f'app-{datetime.now().strftime("%Y-%m-%d")}.log'
+)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} \
+                {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "file": {
+            "level": "INFO",
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": LOG_FILE,
+            "when": "midnight",  # Ротация каждый день в полночь
+            "interval": 1,
+            "backupCount": 30,  # Хранить 30 файлов (30 дней)
+            "encoding": "utf-8",
+            "formatter": "verbose",
+        },
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file", "console"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "myapp": {  # Замени 'myapp' на имя своего приложения или используй любое другое
+            "handlers": ["file", "console"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+    },
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

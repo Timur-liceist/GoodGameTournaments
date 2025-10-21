@@ -10,4 +10,9 @@ urlpatterns = [
         views.TournamentCreateView.as_view(),
         name="create_tournament",
     ),
+    path(
+        "",
+        views.AllTournamentsView.as_view(),
+        name="all_tournaments",
+    ),
 ]

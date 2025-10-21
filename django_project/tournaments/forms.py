@@ -35,49 +35,10 @@ class TournamentCreateForm(forms.ModelForm):
         ),
         required=False,
     )
-    start_datetime = forms.DateTimeField(
-        label="Дата и время начала проведения турнира",
-        widget=forms.DateTimeInput(
-            attrs={
-                "class": "form-control",
-                "type": "datetime-local",
-                "placeholder": "Выберите дату и время начала проведения",
-            },
-        ),
-        required=True,
-    )
-    end_datetime = forms.DateTimeField(
-        label="Дата и время окончания турнира",
-        widget=forms.DateTimeInput(
-            attrs={
-                "class": "form-control",
-                "type": "datetime-local",
-                "placeholder": "Выберите дату и время окончания проведения",
-            },
-        ),
-        required=True,
-    )
-    count_of_teams = forms.IntegerField(
-        label="Количество команд",
-        widget=forms.NumberInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Введите количество команд",
-            },
-        ),
-        required=True,
-        initial=1,
-    )
-    count_of_members_in_team = forms.IntegerField(
-        label="Количество участников в команде",
-        widget=forms.NumberInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Введите количество участников в команде",
-            },
-        ),
-        required=True,
-        initial=1,
+    is_closed_for_requests = forms.BooleanField(
+        label="Можно ли подать заявку на участие в турнир",
+        required=False,
+        widget=forms.CheckboxInput(),
     )
 
     class Meta:
@@ -86,8 +47,5 @@ class TournamentCreateForm(forms.ModelForm):
             "title",
             "rules",
             "description",
-            "start_datetime",
-            "end_datetime",
-            "count_of_teams",
-            "count_of_members_in_team",
+            "is_closed_for_requests",
         ]

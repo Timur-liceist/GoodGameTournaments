@@ -1,0 +1,20 @@
+{% extends "includes/base.html" %}
+{% block title %}Управление командой{% endblock %}
+
+{% block content %}
+
+<div class="card-container">
+    <h1 align="center">{{ team.name }}</h1>
+    <div class="card-inner-container">
+        <h2 align="center">Участники</h2>
+        {% for member in members %}
+            <div class="card-inner-container">
+                <h3 class="card-header">
+                    <span class="header-username">{{ member.user.username }}</span>
+                    <span class="header-status">{{ member.role }}</span>
+                </h3>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

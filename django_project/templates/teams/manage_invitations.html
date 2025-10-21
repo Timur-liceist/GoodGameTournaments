@@ -1,0 +1,49 @@
+{% extends "includes/base.html" %}
+{% block title %}Приглашение в команду{% endblock %}
+
+{% block content %}
+
+<div class="card-container">
+
+    <div class="card-inner-container">
+        <!-- Форма отправки приглашения по email -->
+        <form method="POST">
+            {% csrf_token %}
+            {{ form_invite_email.email }}
+            {% if form_invite_email.email.errors %}
+                <div class="alert alert-danger">{{ form_invite_email.email.errors }}</div>
+            {% endif %}
+            <button class="card-button w-100">
+                Пригласить в команду по email
+            </button>
+            
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </form>
+    </div>
+    
+    <!-- Список приглашений в команду и их статус -->
+    <div class="card-inner-container">
+        <h2 align="center">
+            Приглашения в команду
+        </h2>
+        {% for invitation in invitations %}
+            <h2 class="card-header">
+                <span class="header-username">{{ invitation.invited_user.username }}</span>
+                <span class="header-status">{{ invitation.get_status_display }}</span>
+            </h2>
+        {% empty %}
+        <h2 align="center">
+            <font color="#cc4848">Нет приглашений</font>
+        </h2>
+        {% endfor %}
+    </div>
+    
+</div>
+{% endblock %}

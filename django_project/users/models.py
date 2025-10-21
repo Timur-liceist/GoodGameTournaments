@@ -1,7 +1,9 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import MaxLengthValidator
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class UserManagerForEmail(BaseUserManager):
@@ -25,7 +27,6 @@ class UserManagerForEmail(BaseUserManager):
             raise ValueError(e_message)
 
         if extra_fields.get("is_superuser") is not True:
-
             e_message = "Суперпользователь должен иметь is_superuser=True."
             raise ValueError(e_message)
 
@@ -43,6 +44,22 @@ class UserModel(AbstractUser):
             MaxLengthValidator(2048),
         ],
     )
+    username_validator = UnicodeUsernameValidator()
+
+    username = models.CharField(
+        _("username"),
+        max_length=32,
+        unique=True,
+        help_text=_(
+            "Required. 150 characters or fewer.\
+            Letters, digits and @/./+/-/_ only.",
+        ),
+        validators=[username_validator],
+        error_messages={
+            "unique": _("A user with that username already exists."),
+        },
+    )
+
     email = models.EmailField(
         verbose_name="почта",
         unique=True,
@@ -51,7 +68,6 @@ class UserModel(AbstractUser):
         verbose_name="возможность просмотра профиля другими игроками",
         default=True,
     )
-
 
     objects = UserManagerForEmail()
 

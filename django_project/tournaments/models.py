@@ -62,34 +62,12 @@ class TournamentModel(models.Model):
         verbose_name="правила",
         default="",
     )
-    count_of_members_in_team = models.PositiveSmallIntegerField(
-        verbose_name="количество участников в одной команде",
-        default=1,
-        validators=[
-            django.core.validators.MinValueValidator(1),
-            django.core.validators.MaxValueValidator(32),
-        ],
-    )
-    count_of_teams = models.PositiveSmallIntegerField(
-        verbose_name="количество команд",
-        default=1,
-        validators=[
-            django.core.validators.MinValueValidator(1),
-            django.core.validators.MaxValueValidator(100),
-        ],
-    )
     created_at = models.DateTimeField(
         verbose_name="дата и время создания",
         auto_now_add=True,
     )
-    start_datetime = models.DateTimeField(
-        verbose_name="дата и время начала",
-    )
-    end_datetime = models.DateTimeField(
-        verbose_name="дата и время начала",
-    )
     is_closed_for_requests = models.BooleanField(
-        verbose_name="можно ли ещё зарегистрироваться",
+        verbose_name="можно ли ещё подать заявку на участие",
         default=False,
     )
 

@@ -14,6 +14,10 @@ urlpatterns = [
         include("users.urls"),
     ),
     path(
+        "teams/",
+        include("teams.urls"),
+    ),
+    path(
         "news/",
         include("news.urls"),
     ),

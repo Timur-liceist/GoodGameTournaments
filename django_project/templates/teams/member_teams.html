@@ -1,0 +1,28 @@
+{% extends "includes/base.html" %}
+{% block title %}Создание турнира{% endblock %}
+
+{% block content %}
+<div class="card-container">
+{% if created_teams_by_user %}
+  <h1 align="center">Все команды, где вы <font color="#c84747">УЧАСТНИК</font></h1>
+{% endif %}
+
+{% for team in member_teams %}
+<div class="card-inner-container">
+    <h2 class="card-header">
+        {{ team.name }}
+    </h2>
+    <a href="{% url 'teams:show_team' team_id=team.id %}">
+        <button class="card-button w-100" align="right">
+            Подробнее
+        </button>
+    <a>
+</div>
+{% empty%}
+<div class="card-container">
+  <h1 align="center">Нет команд, где вы <font color="#c84747">УЧАСТНИК</font></h1>
+</div>  
+{% endfor %}
+</div>
+
+{% endblock %}

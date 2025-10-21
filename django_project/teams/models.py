@@ -2,30 +2,6 @@ from django.db import models
 from users.models import UserModel
 
 
-class Member(models.Model):
-    user = models.ForeignKey(
-        UserModel,
-        verbose_name="пользователь",
-        related_name="members_by_user",
-        on_delete=models.CASCADE,
-    )
-    created_at = models.DateTimeField(
-        verbose_name="дата и время создания",
-        auto_now_add=True,
-    )
-    role_name = models.CharField(
-        verbose_name="название роли участника",
-        max_length=255,
-    )
-
-    class Meta:
-        verbose_name = "участник"
-        verbose_name_plural = "участники"
-
-    def __str__(self):
-        return self.user.email
-
-
 class TeamModel(models.Model):
     name = models.CharField(
         verbose_name="название команды",
@@ -36,10 +12,6 @@ class TeamModel(models.Model):
         verbose_name="лидер",
         on_delete=models.CASCADE,
         related_name="teams_by_leader",
-    )
-    members = models.ManyToManyField(
-        Member,
-        related_name="team_by_member",
     )
     created_at = models.DateTimeField(
         verbose_name="дата и время создания",
@@ -52,6 +24,36 @@ class TeamModel(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class MemberModel(models.Model):
+    user = models.ForeignKey(
+        UserModel,
+        verbose_name="пользователь",
+        related_name="members_by_user",
+        on_delete=models.CASCADE,
+    )
+    created_at = models.DateTimeField(
+        verbose_name="дата и время создания",
+        auto_now_add=True,
+    )
+    role = models.CharField(
+        verbose_name="название роли участника",
+        max_length=32,
+    )
+    team = models.ForeignKey(
+        "TeamModel",
+        verbose_name="команда",
+        on_delete=models.CASCADE,
+        related_name="members_by_team",
+    )
+
+    class Meta:
+        verbose_name = "участник"
+        verbose_name_plural = "участники"
+
+    def __str__(self):
+        return f"User <{self.user.email}> - Team <{self.team.name}>"
 
 
 class InvitationToTeamModel(models.Model):
@@ -85,3 +87,6 @@ class InvitationToTeamModel(models.Model):
     class Meta:
         verbose_name = "заявка команды на участие в турнире"
         verbose_name_plural = "заявки команды на участие в турнире"
+
+    def __str__(self):
+        return f"{self.invited_user.email} - {self.team.name}"

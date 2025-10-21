@@ -14,13 +14,16 @@ django-mdeditor = "^0.1.20"
 markdown = "^3.7"
 djangorestframework = "^3.15.2"
 django-widget-tweaks = "^1.5.0"
+celery = {extras = ["redis"], version = "^5.5.3"}
 
 [tool.ruff]
 line-length = 79
 indent-width = 4
+src = ["users", "teams", "tournaments", "news", "core", "battles", ]
 exclude = [
     "migrations",
     "venv",
+    "to_sql.py",
 ]
 [tool.ruff.lint.per-file-ignores]
 # Укажите путь к файлу и коды ошибок для игнорирования
@@ -28,7 +31,7 @@ exclude = [
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["D", "ANN", "EXE002", "RUF012", "RUF001"]
+ignore = ["D", "ANN", "EXE002", "RUF012", "RUF001", "PERF401"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -39,4 +42,3 @@ line-ending = "auto"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-

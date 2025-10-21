@@ -4,23 +4,25 @@
   <head>
     <meta charset="utf-8" />
     <title>{% block title %}{% endblock %}</title>
-    {% comment %} <link
-      href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
-      rel="stylesheet"
-      id="bootstrap-css"
-    /> {% endcomment %}
     
     <link href="{% static 'styles/bootstrap.min.css' %}" rel="stylesheet"/>
     <link href="{% static 'styles/navbar.css' %}" rel="stylesheet" />
     <link href="{% static 'styles/blocks.css' %}" rel="stylesheet" />
-    <link href="{% static 'styles/pagination.css' %}" rel="stylesheet" />
+    <link href="{% static 'styles/pagination.css' %}" rel="stylesheet">
+    
+    <!-- Подключение jQuery и Bootstrap JS -->
+    
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/spoiler.js' %}" defer></script>
+
     <style>
-      {% comment %} @font-face {
+      @font-face {
         font-family: "TF2 Font";
         src: url('{% static "fonts/tf2_fonts.ttf" %}') format("truetype");
         font-weight: normal;
         font-style: normal;
-      } {% endcomment %}
+      }
       form input {
         font-family: Arial, sans-serif;
       }
@@ -35,6 +37,7 @@
         margin: 10px;
         padding: 0;
         font-family: "TF2 Font", sans-serif; {% endcomment %}
+        {% comment %} font-family: "TF2 Font", sans-serif; {% endcomment %}
       }
       .no-tf2-font {
         font-family: Arial, sans-serif; /* Это отменяет шрифт родительского элемента */
@@ -77,11 +80,32 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <!-- Left navbar -->
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
+            <li class="nav-item">
               <a class="nav-link" href="/">
-                <i class="fa fa-home"></i>
-                Home
-                <span class="sr-only">(current)</span>
+                <button class="card-button">
+                  Главная
+                </button>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'teams:select_type_team_view' %}">
+                <button class="card-button">
+                  Команды
+                </button>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'tournaments:all_tournaments' %}">
+                <button class="card-button">
+                  Турниры
+                </button>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'teams:my_invitations' %}">
+                <button class="card-button">
+                  Приглашения в команду
+                </button>
               </a>
             </li>
           </ul>
@@ -106,8 +130,8 @@
                 aria-labelledby="navbarDropdown"
                 style="background-color: #343a40; border: 2px solid #cc4848"
               >
-                <a class="dropdown-item" href="{% url 'users:profile' request.user.id %}">Profile</a>
-                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="{% url 'users:profile' request.user.id %}">Профиль</a>
+                <a class="dropdown-item" href="#">Другое действие</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{% url 'users:logout' %}"
                   >Выйти из аккаунта</a
@@ -128,8 +152,5 @@
     </header>
     <main style="place-items: center">{% block content %}{% endblock %}</main>
 
-    <!-- Подключение jQuery и Bootstrap JS -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   </body>
 </html>
