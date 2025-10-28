@@ -52,9 +52,11 @@
   </div>
 
   <div class="card-footer">
-    <button class="card-button w-100">
-        Подать заявку
-    </button>
+    <a class="w-100" href="{% url 'tournaments:send_request_team_tournament' tournament_id=tournament.id %}">
+      <button class="card-button w-100">
+          Подать заявку
+      </button>
+    </a>
   </div>
 </div>
 {% empty %}

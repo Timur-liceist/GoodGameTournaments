@@ -1,7 +1,8 @@
 import mdeditor
 from django import forms
 
-from tournaments.models import TournamentModel
+from tournaments.models import TournamentModel, RequestTeamForTournamentModel
+from teams.models import TeamModel
 
 
 class TournamentCreateForm(forms.ModelForm):
@@ -48,4 +49,28 @@ class TournamentCreateForm(forms.ModelForm):
             "rules",
             "description",
             "is_closed_for_requests",
+        ]
+
+
+class RequestTeamTournamentForm(forms.Form):
+    team = forms.ModelChoiceField(
+        label="Выбирите команду от которой посылаете запрос на участие",
+        widget=forms.Select(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Выбери команду",
+            },
+        ),
+        queryset=TeamModel.objects,
+        required=False,
+    )
+
+    def set_team_selecting(self, leader_user):
+        self.fields["team"].queryset = TeamModel.objects.filter(
+            leader=leader_user,
+        )
+
+    class Meta:
+        fields = [
+            "team",
         ]

@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-k!o0d)&0-744g(q-)3mwd*hb"  # noqa: S105
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "*",
@@ -42,7 +42,7 @@ INSTALLED_APPS = [
 ]
 
 TIME_LIMITE_FOR_REQUEST_TOURNAMENT = timedelta(hours=3)
-TIME_INTERVAL_INVITE_USER_TO_TEAM = timedelta(hours=24)
+TIME_INTERVAL_INVITE_USER_TO_TEAM = timedelta(hours=24) 
 
 # Путь к директории логов (можно изменить)
 LOG_DIR = os.path.join(BASE_DIR, "logs")

@@ -70,6 +70,10 @@ class TournamentModel(models.Model):
         verbose_name="можно ли ещё подать заявку на участие",
         default=False,
     )
+    team_members = models.ManyToManyField(
+        "teams.TeamModel",
+        related_name="tournaments",
+    )
 
     class Meta:
         verbose_name = "турнир"
@@ -136,4 +140,3 @@ class RequestTeamForTournamentModel(models.Model):
 
     def __str__(self):
         return f"Request {self.team.name} ({self.tournament.name})"
-
