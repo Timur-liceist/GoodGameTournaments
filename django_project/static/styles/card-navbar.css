@@ -1,0 +1,87 @@
+/* Контейнер навигации */
+.navbar {
+    background: rgba(43, 47, 51, 0.9);
+    border-bottom: 1.5px solid #cc4848;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 14px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Контейнер ссылок */
+.nav-links {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+}
+
+/* Ссылки в меню */
+.nav-links a {
+    color: #f8f9fa;
+    text-decoration: none;
+    font-size: 16px;
+    position: relative;
+    padding: 8px 4px;
+    transition: all 0.3s ease;
+}
+
+/* Подчёркивание при наведении */
+.nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 2px;
+    width: 0%;
+    height: 2px;
+    background-color: #cc4848;
+    transition: width 0.3s ease;
+    border-radius: 1px;
+}
+
+/* Hover эффект */
+.nav-links a:hover {
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(255, 90, 90, 0.5);
+    transform: translateY(-1px);
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+/* Активная ссылка */
+.nav-links a.active {
+    color: #ff5a5a;
+}
+
+.nav-links a.active::after {
+    width: 100%;
+}
+
+/* Кнопка (например, "Войти" или "Регистрация") */
+.nav-button {
+    background: rgba(204, 72, 72, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 14px;
+    padding: 8px 16px;
+    color: #ffffff;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    font-size: 15px;
+}
+
+.nav-button:hover {
+    background: rgba(255, 255, 255, 0);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+    transform: translateY(-2px);
+}

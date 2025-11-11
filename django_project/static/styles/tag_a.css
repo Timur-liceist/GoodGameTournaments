@@ -1,0 +1,40 @@
+/* Общий стиль ссылок */
+a.card-link {
+    color: #ff5a5a; /* Акцентный красный */
+    text-decoration: none;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Эффект подсветки при наведении */
+a.card-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0%;
+    height: 2px;
+    background-color: #cc4848;
+    transition: width 0.3s ease;
+    border-radius: 1px;
+}
+
+/* При наведении — анимация подчёркивания и мягкое свечение */
+a.card-link:hover::after {
+    width: 100%;
+}
+
+a.card-link:hover {
+    color: #ffffff;
+    text-shadow: 0 0 6px rgba(255, 90, 90, 0.6);
+    transform: translateY(-1px);
+}
+
+/* Активная/нажатая ссылка */
+a.card-link:active {
+    color: #ff9999;
+    text-shadow: 0 0 4px rgba(255, 90, 90, 0.5);
+    transform: translateY(0);
+}
+
+/* Вариант ссылок в кнопочном стиле */

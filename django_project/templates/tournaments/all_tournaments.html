@@ -19,8 +19,8 @@
 </style>
 {% if request.user.is_superuser %}
 <div class="card-container">
-  <a href="{% url 'news:create_news' %}">
-  <button class="card-button w-100">Написать новость</button>
+  <a href="{% url 'tournaments:create_tournament' %}">
+  <button class="card-button w-100">Создать турнир</button>
   </a>
 </div>
 {% endif %}
@@ -30,6 +30,7 @@
   class="card-container container mt-5"
   style="color: white; border: 2px solid #cc4848; padding: 20px; margin: 70px"
 >
+  
   <div class="card-header">
     <span align="left">{{ tournament.owner }}</span>
     <span class="date" align="right">{{ tournament.created_at }}</span>
@@ -50,14 +51,22 @@
         </div>
     </div>
   </div>
-
-  <div class="card-footer">
-    <a class="w-100" href="{% url 'tournaments:send_request_team_tournament' tournament_id=tournament.id %}">
-      <button class="card-button w-100">
-          Подать заявку
+  {% if not tournament.is_closed_for_requests %}
+    <div class="card-footer">
+      <a class="w-100" href="{% url 'tournaments:send_request_team_tournament' tournament_id=tournament.id %}">
+        <button class="card-button w-100">
+            Подать заявку
+        </button>
+      </a>
+    </div>
+  {% endif %}
+  {% if tournament.owner == request.user or request.user.is_superuser %}
+    <a href="{% url 'tournaments:manage_tournament_battles' tournament_id=tournament.id %}">
+      <button class="card-button-inverted w-100">
+        Управление турниром
       </button>
     </a>
-  </div>
+  {% endif %}
 </div>
 {% empty %}
 <div class="card-container container mt-5">

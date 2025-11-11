@@ -1,8 +1,12 @@
 import mdeditor
 from django import forms
-
-from tournaments.models import TournamentModel, RequestTeamForTournamentModel
 from teams.models import TeamModel
+from users.models import UserModel
+
+from tournaments.models import (
+    BattleModel,
+    TournamentModel,
+)
 
 
 class TournamentCreateForm(forms.ModelForm):
@@ -37,7 +41,7 @@ class TournamentCreateForm(forms.ModelForm):
         required=False,
     )
     is_closed_for_requests = forms.BooleanField(
-        label="Можно ли подать заявку на участие в турнир",
+        label="Пока нелья подать заявку на участие в турнир",
         required=False,
         widget=forms.CheckboxInput(),
     )
@@ -73,4 +77,65 @@ class RequestTeamTournamentForm(forms.Form):
     class Meta:
         fields = [
             "team",
+        ]
+
+
+class BattleForm(forms.ModelForm):
+    first_team = forms.ModelChoiceField(
+        label="Первая команда",
+        widget=forms.Select(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Выбери команду",
+            },
+        ),
+        queryset=TeamModel.objects,
+    )
+    second_team = forms.ModelChoiceField(
+        label="Вторая команда",
+        widget=forms.Select(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Выберите команду",
+            },
+        ),
+        queryset=TeamModel.objects,
+    )
+    judge = forms.ModelChoiceField(
+        label="Судья",
+        widget=forms.Select(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Выберите пользователя",
+            },
+        ),
+        queryset=UserModel.objects,
+    )
+    start_datetime = forms.DateTimeField(
+        label="Дата и время начала сражения",
+        widget=forms.widgets.DateTimeInput(
+            attrs={
+                "class": "form-control",
+                "type": "datetime-local",
+                "placeholder": "Выберите дату и время",
+            },
+        ),
+    )
+
+    def set_team_selecting(
+        self,
+        teams_by_tournament,
+        judges_by_tournament,
+    ):
+        self.fields["first_team"].queryset = teams_by_tournament
+        self.fields["second_team"].queryset = teams_by_tournament
+        self.fields["judge"].queryset = judges_by_tournament
+
+    class Meta:
+        model = BattleModel
+        fields = [
+            "first_team",
+            "second_team",
+            "judge",
+            "start_datetime",
         ]

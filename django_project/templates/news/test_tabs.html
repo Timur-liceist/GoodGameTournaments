@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вкладки без JS</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+/* Используем твои стили */
+body {
+    background-color: #1e2226;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* Контейнер вкладок */
+.tabs {
+    width: 90%;
+    max-width: 1000px;
+    margin: 40px auto;
+    background-color: #2b2f33;
+    border-radius: 16px;
+    border: 1.5px solid #cc4848;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+/* Радиокнопки скрыты */
+.tabs input[type="radio"] {
+    display: none;
+}
+
+/* Заголовки вкладок */
+.tabs label {
+    display: inline-block;
+    padding: 14px 24px;
+    font-size: 16px;
+    color: #f8f9fa;
+    cursor: pointer;
+    background: rgba(204, 72, 72, 0.4);
+    border-right: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+}
+
+.tabs label:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.tabs input[type="radio"]:checked + label {
+    background: rgba(255,255,255,0.15);
+    border-bottom: 3px solid #cc4848;
+    font-weight: bold;
+}
+
+/* Содержимое вкладок */
+.tab-content {
+    display: none;
+    padding: 24px 28px;
+    color: #f8f9fa;
+    animation: fadeIn 0.4s ease;
+}
+
+/* Показываем активную вкладку */
+#tab1:checked ~ .content #content1,
+#tab2:checked ~ .content #content2,
+#tab4:checked ~ .content #content4,
+#tab5:checked ~ .content #content5,
+#tab6:checked ~ .content #content6,
+#tab7:checked ~ .content #content7,
+#tab3:checked ~ .content #content {
+    display: block;
+}
+
+/* Анимация появления */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="tabs card-container">
+    <!-- Вкладки -->
+    <input type="radio" name="tabset" id="tab1" checked>
+    <label for="tab1">Главная</label>
+
+    <input type="radio" name="tabset" id="tab2">
+    <label for="tab2">Настройки</label>
+
+    <input type="radio" name="tabset" id="tab3">
+    <label for="tab3">О проекте</label>
+
+    <!-- Контент -->
+    <div class="content">
+        <div id="content1" class="tab-content">
+            <h2>Главная страница</h2>
+            <p>Здесь можно разместить основную информацию, карточки или кнопки.</p>
+            <button class="card-button">Действие</button>
+        </div>
+
+        <div id="content2" class="tab-content">
+            <h2>Настройки</h2>
+            <p>Тут пользователь может изменить параметры приложения.</p>
+            <input type="text" class="card-input" placeholder="Введите значение">
+        </div>
+
+        <div id="content3" class="tab-content">
+            <h2>О проекте</h2>
+            <p>Этот интерфейс демонстрирует вкладки, стилизованные под твой card-дизайн.</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

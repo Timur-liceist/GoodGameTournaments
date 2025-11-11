@@ -1,0 +1,46 @@
+{% extends "includes/base.html" %} {% block title %}Создание новости 
+{% endblock %} {% block content %} {% load markdown_filters %}
+<div class="card-container">
+    {% include "includes/tabs_manage_tournament.html" %}
+    <a href="{% url 'tournaments:create_battle' tournament_id=tournament_id %}">
+        <button class="card-button w-100">
+            Назначить сражение
+        </button>
+    </a>
+    <div class="card-table-container">
+        <table class="card-table">
+            <thead>
+            <tr>
+                <th>Дата и время</th>
+                <th>Первая команда</th>
+                <th>Вторая команда</th>
+                <th>Судья</th>
+                <th>Статус</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for battle in battles %}
+                    <tr>
+                        <td>{{ battle.start_datetime }}</td>
+                        <td>
+                            <a class="card-link" href="{% url 'teams:show_team' team_id=battle.first_team.id %}">
+                                {{ battle.first_team }}
+                            </a>
+                        </td>
+                        <td>
+                            <a class="card-link" href="{% url 'teams:show_team' team_id=battle.second_team.id %}">
+                                    {{ battle.second_team }}
+                            </a>
+                        </td>
+                        <td>
+                            <a class="card-link" href="{% url 'users:profile' user_id=battle.judge.id %}">
+                                {{ battle.judge }}
+                            </a>
+                        </td>
+                        <td>{{ battle.get_status_display }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+<div>
+{% endblock %}

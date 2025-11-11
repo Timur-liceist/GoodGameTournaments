@@ -7,8 +7,8 @@
     color: #f8f9fa;
     border-radius: 16px;
     border: 1.5px solid #cc4848;
-    width: 90%;
-    max-width: 1000px;
+    width: 85%;
+    /* max-width: 1000px; */
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
@@ -26,8 +26,8 @@
     color: #f8f9fa;
     border-radius: 16px;
     border: 1.5px solid #cc4848;
-    width: 100%;
-    max-width: 780px;
+    width: 80%;
+    /* max-width: 780px; */
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
@@ -39,8 +39,8 @@
     color: #f8f9fa;
     border-radius: 16px;
     border: 1.5px solid #cc4848;
-    width: 100%;
-    max-width: 780px;
+    width: 85%;
+    /* max-width: 780px; */
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
@@ -235,4 +235,41 @@
     padding: 12px 14px;
     max-height: 500px; /* достаточно для плавного раскрытия */
     border: 1.5px solid #cc4848;
+}
+
+.card-button-inverted {
+    /* background: rgba(255, 255, 255, 0.05); полупрозрачный фон */
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(204, 72, 72, 0.5);
+    border-radius: 16px;
+    padding: 10px 20px;
+    /* margin: 0 6px; */
+    margin: 5px auto 5px auto;
+    font-size: 16px;
+    color: #ffffff;
+    cursor: pointer;
+    backdrop-filter: blur(8px); /* эффект стекла */
+    -webkit-backdrop-filter: blur(8px); /* для Safari */
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    position: relative;
+}
+
+.card-button-inverted:hover,
+.card-button-inverted:focus {
+    /* background: rgba(255, 255, 255, 0.12); */
+    background: rgba(255, 255, 255, 0);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.card-button-inverted-active {
+    background: rgba(255, 100, 100, 0.5);
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    box-shadow: 0 0 0 2px rgba(204, 72, 72, 0.3), 0 6px 16px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transform: translateY(-1px);
 }

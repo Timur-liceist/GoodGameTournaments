@@ -1,4 +1,3 @@
-import django.core.validators
 from core.models import AbstractNews
 from django.db import models
 from mdeditor.fields import MDTextField
@@ -48,12 +47,6 @@ class TournamentModel(models.Model):
         on_delete=models.SET_NULL,
         null=True,
     )
-    judges = models.ManyToManyField(
-        UserModel,
-        verbose_name="судьи",
-        related_name="tournaments_by_judges",
-        blank=True,
-    )
     description = MDTextField(
         verbose_name="описание",
         default="",
@@ -67,12 +60,18 @@ class TournamentModel(models.Model):
         auto_now_add=True,
     )
     is_closed_for_requests = models.BooleanField(
-        verbose_name="можно ли ещё подать заявку на участие",
+        verbose_name="Закрыт ли для подачи заявок",
         default=False,
     )
     team_members = models.ManyToManyField(
         "teams.TeamModel",
+        verbose_name="команды участники",
         related_name="tournaments",
+    )
+    judges = models.ManyToManyField(
+        "users.UserModel",
+        verbose_name="судьи",
+        related_name="tournaments_where_judge",
     )
 
     class Meta:
@@ -80,7 +79,9 @@ class TournamentModel(models.Model):
         verbose_name_plural = "турниры"
 
     def __str__(self):
-        return f"'{self.title}' by '{self.owner.username}'"
+        if self.owner:
+            return f"'{self.title}' by '{self.owner.username}'"
+        return f"'{self.title}' by 'DeletedUser'"
 
 
 class TournamentNews(AbstractNews):
@@ -140,3 +141,65 @@ class RequestTeamForTournamentModel(models.Model):
 
     def __str__(self):
         return f"Request {self.team.name} ({self.tournament.name})"
+
+
+class BattleModel(models.Model):
+    CHOICES_STATUS = [
+        ("win_first", "Победа первой команды"),
+        ("win_second", "Победа второй команды"),
+        ("draw", "Ничья"),
+        ("soon", "Ещё не был проведён"),
+        ("problem", "Не состоялса по техническим причинам"),
+    ]
+    first_team = models.ForeignKey(
+        TeamModel,
+        verbose_name="первая команда",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="battles_team_first",
+    )
+    second_team = models.ForeignKey(
+        TeamModel,
+        verbose_name="вторая команда",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="battles_team_second",
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="дата и время создания",
+    )
+    status = models.CharField(
+        choices=CHOICES_STATUS,
+        verbose_name="статус проведения",
+        blank=False,
+        default="soon",
+        max_length=64,
+    )
+    judge = models.ForeignKey(
+        "users.UserModel",
+        verbose_name="судья отвечающий",
+        related_name="battles_by_judge",
+        on_delete=models.SET_NULL,
+        null=True,
+    )
+    start_datetime = models.DateTimeField(
+        verbose_name="дата и время начала",
+    )
+    proof = models.TextField(
+        verbose_name="доказательство",
+        default="",
+    )
+    tournament = models.ForeignKey(
+        to=TournamentModel,
+        verbose_name="турнир в котором будет проведено сражение",
+        related_name="battles_by_tournament",
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = "сражение"
+        verbose_name_plural = "сражения"
+
+    def __str__(self):
+        return f"{self.tournament} {self.created_at} {self.status}"

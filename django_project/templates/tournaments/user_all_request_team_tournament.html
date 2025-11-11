@@ -1,0 +1,18 @@
+
+{% extends "includes/base.html" %}
+{% block title %}Запросы на участие в турнире{% endblock %}
+
+{% block content %}
+
+<div class="card-container">
+    <h1 align=center>Заявки команд(где ты участник или лидер) на участие в турнире</h1>
+    {% for request_team_tournament in requests_team_tournament %}
+        <div class="card-inner-container">
+            <h2 class="card-header">
+                <span class="header-username">{{ request_team_tournament.tournament.title }}</span>
+                <span class="header-status">{{ request_team_tournament.get_status_display }}</span>
+            </h2>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

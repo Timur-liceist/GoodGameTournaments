@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     # my apps
     "users",
     "news",
-    "battles",
     "teams",
     "tournaments",
     "core",

@@ -8,7 +8,11 @@ from teams.forms import (
     InviteToTeamByEmailForm,
     TeamForm,
 )
-from teams.models import InvitationToTeamModel, MemberModel, TeamModel
+from teams.models import (
+    InvitationToTeamModel,
+    MemberModel,
+    TeamModel,
+)
 from teams.utils import is_leader_for_team
 
 
@@ -100,7 +104,7 @@ class ManageInvitations(LoginRequiredMixin, views.View):
 
         invitations = InvitationToTeamModel.objects.filter(
             team=team_id,
-        ).all()
+        ).order_by("created_at")
 
         context = {
             "invitations": invitations,
@@ -277,7 +281,7 @@ class MyInvitationsView(LoginRequiredMixin, views.View):
     def get(self, request):
         invitations_by_user = InvitationToTeamModel.objects.filter(
             invited_user=request.user,
-        )
+        ).order_by("created_at")
         return render(
             request=request,
             template_name="teams/my_invitations.html",

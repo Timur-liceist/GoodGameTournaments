@@ -17,6 +17,7 @@
     padding: 8px; /* Отступы внутри ячеек */
   }
 </style>
+
 {% if request.user.is_superuser %}
 <div class="card-container">
   <a href="{% url 'news:create_news' %}">

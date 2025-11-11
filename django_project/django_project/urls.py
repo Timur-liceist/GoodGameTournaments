@@ -50,6 +50,13 @@ urlpatterns = [
         ),
         name="forbidden",
     ),
+    path(
+        "test_tabs",
+        TemplateView.as_view(
+            template_name="news/test_tabs.html",
+        ),
+        name="forbidden",
+    ),
 ]
 
 if settings.DEBUG:

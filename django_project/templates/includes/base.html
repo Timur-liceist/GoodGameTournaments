@@ -5,18 +5,21 @@
     <meta charset="utf-8" />
     <title>{% block title %}{% endblock %}</title>
     
+    
     <link href="{% static 'styles/bootstrap.min.css' %}" rel="stylesheet"/>
     <link href="{% static 'styles/navbar.css' %}" rel="stylesheet" />
     <link href="{% static 'styles/blocks.css' %}" rel="stylesheet" />
+    <link href="{% static 'styles/table.css' %}" rel="stylesheet" />
     <link href="{% static 'styles/pagination.css' %}" rel="stylesheet">
+    <link href="{% static 'styles/tag_a.css' %}" rel="stylesheet">
+    <link href="{% static 'styles/card-navbar.css' %}" rel="stylesheet">
     
     <!-- Подключение jQuery и Bootstrap JS -->
     
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/spoiler.js' %}" defer></script>
-
-    <style>
+<style>
       @font-face {
         font-family: "TF2 Font";
         src: url('{% static "fonts/tf2_fonts.ttf" %}') format("truetype");
@@ -28,7 +31,8 @@
       }
 
       body {
-        background-image: url('{% static "images/pattern-trio-pentagons.png" %}');
+        {% comment %} background-image: url('{% static "images/pattern-trio-pentagons.png" %}'); {% endcomment %}
+        background-color: #1d1d1dff;
         background-repeat: repeat;
         background-width: 5px;
         {% comment %} background-size: cover;
@@ -61,101 +65,25 @@
         color: black;
       }
     </style>
+    
   </head>
   <body>
     <header>
-      <nav class="navbar navbar-icon-top navbar-expand-lg navbar-dark bg-dark">
-        <img width="65px" height="auto" src="{% static 'images/logo.png' %}" />
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <!-- Left navbar -->
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <button class="card-button">
-                  Главная
-                </button>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'teams:select_type_team_view' %}">
-                <button class="card-button">
-                  Команды
-                </button>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'tournaments:all_tournaments' %}">
-                <button class="card-button">
-                  Турниры
-                </button>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'teams:my_invitations' %}">
-                <button class="card-button">
-                  Приглашения в команду
-                </button>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'teams:my_invitations' %}">
-                <button class="card-button">
-                  Заявки на участие в турнире
-                </button>
-              </a>
-            </li>
-          </ul>
-
-          <!-- Right navbar -->
-          <ul class="navbar-nav">
-            {% if user.is_authenticated %}
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navbarDropdown"
-                role="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                {{ user.email }}
-              </a>
-              <div
-                class="dropdown-menu dropdown-menu-left"
-                aria-labelledby="navbarDropdown"
-                style="background-color: #343a40; border: 2px solid #cc4848"
-              >
-                <a class="dropdown-item" href="{% url 'users:profile' request.user.id %}">Профиль</a>
-                <a class="dropdown-item" href="#">Другое действие</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{% url 'users:logout' %}"
-                  >Выйти из аккаунта</a
-                >
-              </div>
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'users:login' %}">
-                <i class="fa fa-user"></i>
-                Войти
-              </a>
-            </li>
-            {% endif %}
-          </ul>
+      <nav class="navbar">
+        <div class="nav-links">
+          <img width="65px" height="auto" src="{% static 'images/logo.png' %}" />
+          <a href="{% url 'homepage' %}">Главная</a>
+          <a href="{% url 'teams:select_type_team_view' %}">Команды</a>
+          <a href="{% url 'tournaments:all_tournaments' %}">Турниры</a>
+          <a href="{% url 'teams:my_invitations' %}">Мои приглашения</a>
+          <a href="{% url 'tournaments:user_all_request_team_tournament' %}">Заявки на участие</a>
+          {% if not request.user.is_authenticated %}
+          <button class="nav-button">Войти</button>
+          {% else %}
+          <a href="{% url 'users:profile' user_id=request.user.id %}"><font style="color: #cc4848">{{ request.user.email }}<font></a>
+          <a href="{% url 'users:logout' %}">Выйти</a>
+          {% endif %}
         </div>
-      </nav>
     </header>
     <main style="place-items: center">{% block content %}{% endblock %}</main>
 

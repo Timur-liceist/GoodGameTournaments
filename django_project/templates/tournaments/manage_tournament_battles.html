@@ -1,0 +1,41 @@
+{% extends "includes/base.html" %}
+{% block title %}Сражения турнира{% endblock %}
+
+{% block content %}
+<div class="card-container">
+    <a href="{% url 'tournaments:create_battle' tournament_id=tournament_id %}">
+        <button>
+            Назначить сражение
+        </button>
+    </a>
+    <div class="card-container">
+        <div class="card-table-container">
+            <table class="card-table">
+                <thead>
+                <tr>
+                    <th>Дата и время проведения</th>
+                    <th>Команда 1</th>
+                    <th>Команда 2</th>
+                    <th>Итог</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>1 октября 2025</td>
+                    <td>Прекрасная команда</td>
+                    <td>Ужасная команда</td>
+                    <td>
+                        <a href="#">
+                            <button class="card-container">
+                                Подробнее
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
