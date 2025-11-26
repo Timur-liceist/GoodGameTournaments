@@ -12,8 +12,9 @@ def is_owner_tournament(
         raise TypeError(error_message)
 
     if tournament_id:
-        tournament = TournamentModel.filter(id=tournament_id).first()
+        tournament = TournamentModel.objects.filter(id=tournament_id).first()
 
     if user_id:
-        user = TournamentModel.filter(id=user_id).first()
+        user = TournamentModel.objects.filter(id=user_id).first()
 
+    return user == tournament.owner

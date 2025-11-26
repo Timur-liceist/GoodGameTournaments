@@ -1,7 +1,8 @@
-from django.urls import path
+from django.urls import path, reverse_lazy
 from django.views.generic import TemplateView
 
 from users.views import (
+    AuthSteamCompleteView,
     LoginView,
     LogoutView,
     PingView,
@@ -56,5 +57,22 @@ urlpatterns = [
             },
         ),
         name="not_public_profile",
+    ),
+    path(
+        "need_auth_steam",
+        TemplateView.as_view(
+            template_name="includes/error.html",
+            extra_context={
+                "error_message": "Пожалуйста авторизуйтесь через Steam",
+                "href_link": reverse_lazy("social:begin", args=["steam"]),
+                "button_text": "Войти через Steam",
+            },
+        ),
+        name="need_auth_steam",
+    ),
+    path(
+        "auth/steam/<str:steam_id>/complete",
+        AuthSteamCompleteView.as_view(),
+        name="auth_steam_complete",
     ),
 ]

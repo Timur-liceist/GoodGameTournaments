@@ -78,7 +78,7 @@
           <a href="{% url 'teams:my_invitations' %}">Мои приглашения</a>
           <a href="{% url 'tournaments:user_all_request_team_tournament' %}">Заявки на участие</a>
           {% if not request.user.is_authenticated %}
-          <button class="nav-button">Войти</button>
+          <a href="{% url 'social:begin' 'steam' %}">Steam</a>
           {% else %}
           <a href="{% url 'users:profile' user_id=request.user.id %}"><font style="color: #cc4848">{{ request.user.email }}<font></a>
           <a href="{% url 'users:logout' %}">Выйти</a>

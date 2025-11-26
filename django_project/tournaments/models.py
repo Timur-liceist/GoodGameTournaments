@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from core.models import AbstractNews
 from django.db import models
 from mdeditor.fields import MDTextField
@@ -67,11 +68,13 @@ class TournamentModel(models.Model):
         "teams.TeamModel",
         verbose_name="команды участники",
         related_name="tournaments",
+        blank=True,
     )
     judges = models.ManyToManyField(
         "users.UserModel",
         verbose_name="судьи",
         related_name="tournaments_where_judge",
+        blank=True,
     )
 
     class Meta:
@@ -84,7 +87,7 @@ class TournamentModel(models.Model):
         return f"'{self.title}' by 'DeletedUser'"
 
 
-class TournamentNews(AbstractNews):
+class TournamentNewsModel(AbstractNews):
     tournament = models.ForeignKey(
         TournamentModel,
         verbose_name="турнир",
@@ -96,7 +99,7 @@ class TournamentNews(AbstractNews):
         verbose_name="автор",
         on_delete=models.SET_NULL,
         null=True,
-        related_name="tournament_news_by_user",
+        related_name="tournament_news_by_author",
     )
 
     class Meta:
@@ -112,7 +115,6 @@ class RequestTeamForTournamentModel(models.Model):
         ("pending", "Ожидается"),
         ("accepted", "Принята"),
         ("rejected", "Отклонена"),
-        ("expired", "Просрочена"),
     ]
     team = models.ForeignKey(
         TeamModel,
@@ -134,6 +136,16 @@ class RequestTeamForTournamentModel(models.Model):
         choices=CHOICES_STATUS,
         default="pending",
     )
+
+    def clean(self):
+        if self.status not in [choice[0] for choice in self.CHOICES_STATUS]:
+            raise ValidationError(
+                f"Недопустимое значение статуса: {self.status}"
+            )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "заявка команды на участие в турнире"
@@ -203,3 +215,5 @@ class BattleModel(models.Model):
 
     def __str__(self):
         return f"{self.tournament} {self.created_at} {self.status}"
+
+

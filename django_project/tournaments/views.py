@@ -1,5 +1,6 @@
 from django import views
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from teams.models import MemberModel
 
@@ -7,12 +8,15 @@ from tournaments.forms import (
     BattleForm,
     RequestTeamTournamentForm,
     TournamentCreateForm,
+    TournamentNewsForm,
 )
 from tournaments.models import (
     BattleModel,
     RequestTeamForTournamentModel,
     TournamentModel,
+    TournamentNewsModel,
 )
+from tournaments.utils import is_owner_tournament
 
 
 class TournamentCreateView(LoginRequiredMixin, views.View):
@@ -162,6 +166,10 @@ class ManageTournamentBattles(LoginRequiredMixin, views.View):
         context = {
             "battles": battles,
             "tournament_id": tournament_id,
+            "is_owner_tournament": is_owner_tournament(
+                tournament_id=tournament_id,
+                user=request.user,
+            ),
         }
 
         return render(
@@ -173,7 +181,6 @@ class ManageTournamentBattles(LoginRequiredMixin, views.View):
 
 class BattleCreateView(LoginRequiredMixin, views.View):
     def get(self, request, tournament_id):
-        form = BattleForm()
         tournament = (
             TournamentModel.objects.filter(
                 id=tournament_id,
@@ -182,10 +189,18 @@ class BattleCreateView(LoginRequiredMixin, views.View):
                 "judges",
             )
             .prefetch_related(
-                "team_members",
+                "memberships_by_tournament",
             )
             .first()
         )
+
+        if not is_owner_tournament(
+            tournament=tournament,
+            user=request.user,
+        ):
+            return redirect("forbidden")
+
+        form = BattleForm()
 
         form.set_team_selecting(
             teams_by_tournament=tournament.team_members,
@@ -202,6 +217,12 @@ class BattleCreateView(LoginRequiredMixin, views.View):
         )
 
     def post(self, request, tournament_id):
+        if not is_owner_tournament(
+            tournamen_id=tournament_id,
+            user=request.user,
+        ):
+            return redirect("forbidden")
+
         form = BattleForm(request.POST)
         if form.is_valid():
             new_battle = form.save(commit=False)
@@ -256,9 +277,263 @@ class ManageBattleView(LoginRequiredMixin, views.View):
             "battles": battles_by_tournament,
             "owner_tournament": tournament.owner,
             "tournament_id": tournament_id,
+            "is_owner_tournament": is_owner_tournament(
+                tournament=tournament,
+                user=request.user,
+            ),
         }
         return render(
             request=request,
             template_name="tournaments/manage_battles.html",
             context=context,
+        )
+
+
+class ManageTournamentMemberTeams(LoginRequiredMixin, views.View):
+    def get(self, request, tournament_id):
+        tournament = TournamentModel.objects.filter(
+            id=tournament_id,
+        ).fisrt()
+        context = {
+            "teams": tournament.teams,
+            "is_owner_tournament": is_owner_tournament(
+                tournament=tournament,
+                user=request.user,
+            ),
+        }
+        return render(
+            request=request,
+            template_name="tournaments/manage_tournament_teams.html",
+            context=context,
+        )
+
+
+class ManageTornamentRequests(LoginRequiredMixin, views.View):
+    def get(self, request, tournament_id, status_filter):
+        if not is_owner_tournament(
+            tournament_id=tournament_id,
+            user=request.user,
+        ):
+            return redirect("forbidden")
+        all_team_member_requests = (
+            RequestTeamForTournamentModel.objects.filter(
+                tournament__id=tournament_id,
+            )
+            .select_related("team")
+            .order_by("-created_at")
+        )
+
+        if status_filter != "all":
+            all_team_member_requests = all_team_member_requests.filter(
+                status=status_filter,
+            )
+
+        context = {
+            "all_team_member_requests": all_team_member_requests,
+            "is_owner_tournament": is_owner_tournament(
+                tournament_id=tournament_id,
+                user=request.user,
+            ),
+            "tournament_id": tournament_id,
+        }
+        return render(
+            request=request,
+            context=context,
+            template_name="tournaments/manage_tournament_requests.html",
+        )
+
+
+class RejectTournamentRequest(LoginRequiredMixin, views.View):
+    def get(self, request, tournament_id, tournament_request_id):
+        if not is_owner_tournament(
+            tournament_id=tournament_id,
+            user=request.user,
+        ):
+            return redirect("forbidden")
+
+        request_team_tournament = RequestTeamForTournamentModel.objects.filter(
+            id=tournament_request_id,
+        ).first()
+
+        if request_team_tournament.status != "pending":
+            return redirect("forbidden")
+
+        request_team_tournament.status = "rejected"
+        request_team_tournament.save()
+
+        data = {
+            "status": "Rejected",
+        }
+
+        return JsonResponse(
+            data,
+            safe=False,
+            status=200,
+        )
+
+
+class AcceptTournamentRequest(LoginRequiredMixin, views.View):
+    def get(self, request, tournament_id, tournament_request_id):
+        if not is_owner_tournament(
+            tournament_id=tournament_id,
+            user=request.user,
+        ):
+            return redirect("forbidden")
+
+        request_team_tournament = (
+            RequestTeamForTournamentModel.objects.filter(
+                id=tournament_request_id,
+            )
+            .select_related("team")
+            .first()
+        )
+
+        if request_team_tournament.status != "pending":
+            return redirect("forbidden")
+
+        tournament = (
+            TournamentModel.objects.filter(
+                id=tournament_id,
+            )
+            .prefetch_related("team_members")
+            .first()
+        )
+
+        tournament.team_members.add(request_team_tournament.team)
+        tournament.save()
+
+        request_team_tournament.status = "accepted"
+        request_team_tournament.save()
+
+        data = {
+            "status": "Accepted",
+        }
+
+        return JsonResponse(
+            data,
+            safe=False,
+            status=200,
+        )
+
+
+class AllTournamentNewsView(LoginRequiredMixin, views.View):
+    def get(self, request, tournament_id):
+        tournament_news = TournamentNewsModel.objects.select_related(
+            "author",
+        ).filter(
+            tournament__id=tournament_id,
+        )
+
+        context = {
+            "tournament_news": tournament_news,
+            "tournament_id": tournament_id,
+            "is_owner_tournament": is_owner_tournament(
+                tournament_id=tournament_id,
+                user=request.user,
+            ),
+        }
+
+        return render(
+            request,
+            "tournaments/tournament_news.html",
+            context=context,
+        )
+
+
+class CreateTournamentNewsView(LoginRequiredMixin, views.View):
+    def get(self, request, tournament_id):
+        if not request.user.is_authenticated:
+            return redirect("users:not_logined")
+
+        if not is_owner_tournament(
+            tournament_id=tournament_id,
+            user=request.user,
+        ):
+            return redirect("forbidden")
+
+        form = TournamentNewsForm()
+
+        context = {
+            "form": form,
+        }
+
+        return render(
+            request,
+            "news/create_news.html",
+            context=context,
+        )
+
+    def post(self, request, tournament_id):
+        if not request.user.is_authenticated:
+            return redirect("users:not_logined")
+
+        if not is_owner_tournament(
+            tournament_id=tournament_id,
+            user=request.user,
+        ):
+            return redirect("forbidden")
+
+        form = TournamentNewsForm(request.POST)
+
+        if form.is_valid():
+            news = form.save(commit=False)
+            news.author = request.user
+            news.tournament_id = tournament_id
+            news.save()
+
+        return redirect("news:general_news")
+
+
+class EditTournamentNewsView(LoginRequiredMixin, views.View):
+    def get(self, request, tournament_id, tournament_news_id):
+        if not request.user.is_authenticated:
+            return redirect("users:not_logined")
+
+        if not is_owner_tournament(
+            tournament_id=tournament_id,
+            user=request.user,
+        ):
+            return redirect("forbidden")
+
+        news_for_update = TournamentNewsModel.objects.filter(
+            id=tournament_news_id,
+        ).first()
+
+        form = TournamentNewsForm(instance=news_for_update)
+
+        context = {
+            "form": form,
+        }
+
+        return render(
+            request,
+            "news/edit_news.html",
+            context=context,
+        )
+
+    def post(self, request, tournament_id, tournament_news_id):
+        if not request.user.is_authenticated:
+            return redirect("users:not_logined")
+
+        if not is_owner_tournament(
+            tournament_id=tournament_id,
+            user=request.user,
+        ):
+            return redirect("forbidden")
+
+        news_for_update = TournamentNewsModel.objects.filter(
+            id=tournament_news_id,
+        ).first()
+
+        form = TournamentNewsForm(
+            request.POST,
+            instance=news_for_update,
+        )
+
+        if form.is_valid():
+            form.save()
+
+        return redirect(
+            "tournaments:tournament_news",
+            tournament_id=tournament_id,
         )

@@ -1,7 +1,7 @@
 {% extends "includes/base.html" %} {% block title %}Создание новости 
 {% endblock %} {% block content %} {% load markdown_filters %}
 <div class="card-container">
-    {% include "includes/tabs_manage_tournament.html" with tournament_id=tournament_id %}
+    {% include "includes/tabs_manage_tournament.html" %}
     <a href="{% url 'tournaments:create_battle' tournament_id=tournament_id %}">
         <button class="card-button w-100">
             Назначить сражение
@@ -11,10 +11,7 @@
         <table class="card-table">
             <thead>
             <tr>
-                <th>Дата и время</th>
-                <th>Первая команда</th>
-                <th>Вторая команда</th>
-                <th>Судья</th>
+                <th>Название команды</th>
                 <th>Статус</th>
             </tr>
             </thead>

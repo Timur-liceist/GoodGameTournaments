@@ -2,8 +2,14 @@
 {% endblock %} {% block content %}
 <div class="card-container" align="center">
     <h1>{{ error_message }}</h1>
-    <a href="{% url 'homepage' %}">
-        <button type="card-button" style="font-size: 30px" class="card-button">На главную</button>
-    </a>
+    {% if not href_link %}
+        <a href="{% url 'homepage' %}">
+            <button type="card-button" style="font-size: 30px" class="card-button">На главную</button>
+        </a>
+    {% else %}
+        <a href="{{ href_link }}">
+            <button type="card-button" style="font-size: 30px" class="card-button">{{ button_text }}</button>
+        </a>
+    {% endif %}
 </div>
 {% endblock %}

@@ -1,0 +1,61 @@
+{% extends "includes/base.html" %} {% block title %}Создание новости 
+{% endblock %} {% block content %} {% load markdown_filters %}
+<div class="card-container">
+    {% include "includes/tabs_manage_tournament.html" with tournament_id=tournament_id%}
+    {% for request_team_tournament in all_team_member_requests %}
+        <div class="card-inner-container">
+            <h2 class="card-header">
+                <span class="header-username">{{ request_team_tournament.team.name }}</span>
+                <span class="header-status" request_id={{request_team_tournament.id}}>{{ request_team_tournament.get_status_display }}</span>
+                {% if request_team_tournament.status == "pending" %}
+                
+                    <a href="#">
+                        <button class="card-button w-100 accept_button" request_id={{request_team_tournament.id}} align="right">
+                            ✓ Принять
+                        </button>
+                    </a>
+                    <a href="#">
+                        <button class="card-button w-100 reject_button" request_id={{request_team_tournament.id}} align="right">
+                            ✕ Отклонить
+                        </button>
+                    </a>
+                {% else %}
+                {% endif %}
+            </h2>
+        </div>
+    {% endfor %}
+<div>
+
+<script>
+    const accept_buttons = document.querySelectorAll(".accept_button");
+    const reject_buttons = document.querySelectorAll(".reject_button");
+    {% comment %} console.log("{% url 'tournaments:tournament_request_accept' tournament_id=tournament_id tournament_request_id=2 %}") {% endcomment %}
+
+    accept_buttons.forEach((button, index) => {
+        button.addEventListener("click", function() {
+            console.log(button.getAttribute("class"));
+            button.remove();
+            text_status = document.querySelector(`span[request_id="${button.getAttribute("request_id")}"]`);
+            text_status.textContent = "Принято";
+            request_id = button.getAttribute("request_id");
+            inverted_button = document.querySelector(`button.reject_button[request_id="${button.getAttribute("request_id")}"]`);
+            inverted_button.remove();
+            fetch(`${button.getAttribute("request_id")}/accept`);
+        });
+    });
+
+    reject_buttons.forEach((button, index) => {
+        button.addEventListener("click", function() {
+            console.log(button.getAttribute("class"));
+            button.remove();
+            text_status = document.querySelector(`span[request_id="${button.getAttribute("request_id")}"]`);
+            text_status.textContent = "Отклонено";
+            request_id = button.getAttribute("request_id");
+            inverted_button = document.querySelector(`button.accept_button[request_id="${button.getAttribute("request_id")}"]`);
+            inverted_button.remove();
+            fetch(`${button.getAttribute("request_id")}/reject`);
+        });
+    });
+
+</script>
+{% endblock %}

@@ -1,9 +1,11 @@
+
 <nav class="navbar">
   <div class="nav-links">
-    <a href="#" class="active">Главная</a>
-    <a href="#">Проекты</a>
-    <a href="#">О нас</a>
-    <a href="#">Контакты</a>
-    <button class="nav-button">Войти</button>
+    <a href="#">Сражения</a>
+    {% comment %} <a href="{% url 'tournaments:manage_tournament_teams' %}">Команды</a> {% endcomment %}
+    <a href="#">Команды</a>
+    <a href="{% url 'tournaments:manage_tournament_requests' tournament_id=tournament_id status_filter='all' %}">Заявки на участие</a>
+    <a href="#">Судьи</a>
+    <a href="{% url 'tournaments:tournament_news' tournament_id=tournament_id %}">Новости</a>
   </div>
 </nav>

@@ -1,0 +1,49 @@
+{% extends "includes/base.html" %} {% block title %}Создание новости 
+{% endblock %} {% block content %} {% load markdown_filters %}
+<div class="card-container">
+    {% include "includes/tabs_manage_tournament.html" %}
+
+</div>
+{% if is_owner_tournament %}
+<div class="card-container">
+    <a href="{% url 'tournaments:tournament_create_news' tournament_id=tournament_id %}">
+    <button class="card-button w-100">Написать новость</button>
+    </a>
+</div>
+{% endif %}
+
+{% for news in tournament_news %}
+<div
+    class="card-container container mt-5"
+    style="color: white; border: 2px solid #cc4848; padding: 20px; margin: 70px"
+>
+    <div class="card-header">
+        <span align="left">{{ news.author }}</span>
+        {% if is_owner_tournament %}
+        <a href="{% url 'tournaments:tournament_edit_news' tournament_news_id=news.id tournament_id=tournament_id %}">
+            <button class="card-button w-100">Редактировать</button>
+        </a>
+        {% endif %}
+        <span class="date" align="right">{{ news.created_at }}</span>
+    </div>
+    <div class="no-tf2-font">
+        <h1>{{ news.title }}</h1>
+        <hr class="card-hr">
+        <p>{{ news.content | markdown | safe }}</p>
+    </div>
+
+    <div class="card-footer">
+        <button class="card-button" onclick="likePost()">
+            👍 <span id="like-count">0</span>
+        </button>
+        <button class="card-button" onclick="dislikePost()">
+            👎 <span id="dislike-count">0</span>
+        </button>
+    </div>
+</div>
+{% empty %}
+<div class="card-container container mt-5">
+    <h1 align="center">Нет новостей</h1>
+</div>
+{% endfor %}
+{% endblock %}

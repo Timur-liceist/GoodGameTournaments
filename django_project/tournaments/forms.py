@@ -1,11 +1,13 @@
 import mdeditor
 from django import forms
+from mdeditor.widgets import MDEditorWidget
 from teams.models import TeamModel
 from users.models import UserModel
 
 from tournaments.models import (
     BattleModel,
     TournamentModel,
+    TournamentNewsModel,
 )
 
 
@@ -139,3 +141,18 @@ class BattleForm(forms.ModelForm):
             "judge",
             "start_datetime",
         ]
+
+
+
+class TournamentNewsForm(forms.ModelForm):
+
+    class Meta:
+        model = TournamentNewsModel
+
+        fields = [
+            "title",
+            "content",
+        ]
+        widgets = {
+            "content": MDEditorWidget(),
+        }

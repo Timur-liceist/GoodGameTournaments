@@ -41,26 +41,6 @@ class RegistrationForm(forms.ModelForm):
         ),
         required=False,
     )
-    password = forms.CharField(
-        label="Пароль",
-        widget=forms.PasswordInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Введите пароль",
-            },
-        ),
-        required=True,
-    )
-    password_repeat = forms.CharField(
-        label="Повторите пароль",
-        widget=forms.PasswordInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Повторите пароль",
-            },
-        ),
-        required=True,
-    )
 
     class Meta:
         model = UserModel
@@ -68,8 +48,6 @@ class RegistrationForm(forms.ModelForm):
             "username",
             "email",
             "bio",
-            "password",
-            "password_repeat",
         ]
 
     def clean_password(self):

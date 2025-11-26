@@ -55,7 +55,14 @@ urlpatterns = [
         TemplateView.as_view(
             template_name="news/test_tabs.html",
         ),
-        name="forbidden",
+        name="test_tabs",
+    ),
+    path(
+        "auth/",
+        include(
+            "social_django.urls",
+            namespace="social",
+        ),
     ),
 ]
 

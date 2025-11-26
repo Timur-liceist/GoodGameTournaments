@@ -1,6 +1,9 @@
 import os
+import re
 from datetime import datetime, timedelta
 from pathlib import Path
+
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,6 +35,7 @@ INSTALLED_APPS = [
     # libraries apps
     "widget_tweaks",
     "mdeditor",
+    "social_django",
     # my apps
     "users",
     "news",
@@ -41,7 +45,7 @@ INSTALLED_APPS = [
 ]
 
 TIME_LIMITE_FOR_REQUEST_TOURNAMENT = timedelta(hours=3)
-TIME_INTERVAL_INVITE_USER_TO_TEAM = timedelta(hours=24) 
+TIME_INTERVAL_INVITE_USER_TO_TEAM = timedelta(hours=24)
 
 # Путь к директории логов (можно изменить)
 LOG_DIR = os.path.join(BASE_DIR, "logs")
@@ -109,6 +113,45 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
+STEAM_API_KEY = "4DAEB2E91DC5D90F84BC8662AC8F88C3"
+STEAM_ID_REGEX = re.compile(r"https://steamcommunity.com/openid/id/(\d+)")
+OPENID_URL = "https://steamcommunity.com/openid/"
+AUTHENTICATION_BACKENDS = (
+    "social_core.backends.steam.SteamOpenId",
+    "django.contrib.auth.backends.ModelBackend",
+)
+
+SOCIAL_AUTH_STEAM_API_KEY = "4DAEB2E91DC5D90F84BC8662AC8F88C3"
+
+SOCIAL_AUTH_PIPELINE = (
+    "social_core.pipeline.social_auth.social_details",
+    "social_core.pipeline.social_auth.social_uid",
+    "social_core.pipeline.social_auth.auth_allowed",
+    # ❌ Убираем social_user, create_user и associate_user,
+    # ❌ чтобы user никогда не создавался.
+    # 'social_core.pipeline.social_auth.social_user',
+    # 'social_core.pipeline.user.get_username',
+    # 'social_core.pipeline.user.create_user',
+    # 'social_core.pipeline.social_auth.associate_user',
+    "social_core.pipeline.social_auth.load_extra_data",
+    # наш кастомный шаг — перенаправить куда нужно
+    "users.pipeline.redirect_with_steam_id",
+)
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.load_extra_data',
+
+    'users.pipeline.redirect_with_steam_id',
+)
+
+
+LOGIN_REDIRECT_URL = "/steam-auth-complete/"
+LOGOUT_REDIRECT_URL = "/"
+
+
 ROOT_URLCONF = "django_project.urls"
 
 TEMPLATES = [
@@ -141,7 +184,7 @@ DATABASES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_COOKIE_AGE = 1209600
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-LOGIN_URL = "users:login"
+LOGIN_URL = reverse_lazy("users:need_auth_steam")
 
 AUTH_PASSWORD_VALIDATORS = [
     {

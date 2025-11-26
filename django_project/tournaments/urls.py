@@ -27,6 +27,11 @@ urlpatterns = [
         name="user_all_request_team_tournament",
     ),
     path(
+        "<int:tournament_id>/manage/requests/<str:status_filter>",
+        views.ManageTornamentRequests.as_view(),
+        name="manage_tournament_requests",
+    ),
+    path(
         "<int:tournament_id>/manage/battles",
         views.ManageBattleView.as_view(),
         name="manage_tournament_battles",
@@ -45,5 +50,30 @@ urlpatterns = [
             },
         ),
         name="tournament_reg_is_closed",
+    ),
+    path(
+        "<int:tournament_id>/manage/requests/<int:tournament_request_id>/accept",
+        views.AcceptTournamentRequest.as_view(),
+        name="tournament_request_accept",
+    ),
+    path(
+        "<int:tournament_id>/manage/requests/<int:tournament_request_id>/reject",
+        views.RejectTournamentRequest.as_view(),
+        name="tournament_request_reject",
+    ),
+    path(
+        "<int:tournament_id>/news",
+        views.AllTournamentNewsView.as_view(),
+        name="tournament_news",
+    ),
+    path(
+        "<int:tournament_id>/news/create",
+        views.CreateTournamentNewsView.as_view(),
+        name="tournament_create_news",
+    ),
+    path(
+        "<int:tournament_id>/news/<int:tournament_news_id>/edit",
+        views.EditTournamentNewsView.as_view(),
+        name="tournament_edit_news",
     ),
 ]

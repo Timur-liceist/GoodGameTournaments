@@ -7,36 +7,41 @@ from django.utils.translation import gettext_lazy as _
 
 
 class UserManagerForEmail(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(
+        self, email, steamid64=None, password=None, **extra_fields
+    ):
         if not email:
-            e_message = "Поле Email обязательно"
-            raise ValueError(e_message)
+            raise ValueError("Поле Email обязательно")
+
+        if not steamid64:
+            raise ValueError("Поле SteamID64 обязательно")
 
         email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+
+        user = self.model(email=email, steamid64=steamid64, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
+    def create_superuser(
+        self, email, steamid64, password=None, **extra_fields
+    ):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
 
-        if extra_fields.get("is_staff") is not True:
-            e_message = "Суперпользователь должен иметь is_staff=True."
-            raise ValueError(e_message)
-
-        if extra_fields.get("is_superuser") is not True:
-            e_message = "Суперпользователь должен иметь is_superuser=True."
-            raise ValueError(e_message)
-
-        return self.create_user(email, password, **extra_fields)
+        return self.create_user(email, steamid64, password, **extra_fields)
 
 
 class UserModel(AbstractUser):
     last_name = None
     first_name = None
+    password = None
 
+    steamid64 = models.CharField(
+        verbose_name="steamid64",
+        max_length=32,
+        unique=True,
+    )
     bio = models.TextField(
         verbose_name="биография",
         default="",
@@ -70,10 +75,13 @@ class UserModel(AbstractUser):
     )
 
     objects = UserManagerForEmail()
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["steamid64"]
+
 
     class Meta:
         verbose_name = "пользователь"
         verbose_name_plural = "пользователи"
 
     def __str__(self):
-        return self.username
+        return self.email

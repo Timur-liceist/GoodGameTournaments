@@ -41,15 +41,13 @@
     <!-- Кнопка отправки -->
     <button type="submit" class="btn w-100 card-button">Войти</button>
   </form>
-  <form action="{% url 'users:registration' %}">
-    <button
-      type="submit"
-      class="btn card-button w-100"
-      style="color: white; margin-top: 5px"
-    >
-      Нет аккаунта?
-    </button>
-  </form>
+  <button
+    class="btn card-button w-100"
+    style="color: white; margin-top: 5px"
+  >
+    Нет аккаунта?
+  </button>
+          <a href="{% url 'users:profile' user_id=request.user.id %}"><font style="color: #cc4848">{{ request.user.email }}<font></a>
 </div>
 
 {% endblock %}
