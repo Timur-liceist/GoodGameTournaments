@@ -13,6 +13,10 @@
                 <span class="header-status">{{ request_team_tournament.get_status_display }}</span>
             </h2>
         </div>
+    {% empty %}
+    <h1 align="center">
+        <font color="#cc4848">Нет заявок</font>
+    </h1>
     {% endfor %}
 </div>
 {% endblock %}

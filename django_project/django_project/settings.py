@@ -4,23 +4,26 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from django.urls import reverse_lazy
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Загрузка env окружения
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-k!o0d)&0-744g(q-)3mwd*hb"  # noqa: S105
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+DEBUG = os.getenv("DJANGO_DEBUG", "true") in ["true", "True"]
+print("DEBUG", DEBUG)
+print("SECRET_KEY", SECRET_KEY)
 ALLOWED_HOSTS = [
     "*",
-    "RusikToo.pythonanywhere.com",
 ]
 
 
@@ -114,7 +117,7 @@ MIDDLEWARE = [
 ]
 
 
-STEAM_API_KEY = "4DAEB2E91DC5D90F84BC8662AC8F88C3"
+STEAM_API_KEY = os.getenv("STEAM_API_KEY", "")
 STEAM_ID_REGEX = re.compile(r"https://steamcommunity.com/openid/id/(\d+)")
 OPENID_URL = "https://steamcommunity.com/openid/"
 AUTHENTICATION_BACKENDS = (

@@ -4,7 +4,7 @@
 {% block content %}
 
 <div class="card-container">
-    <h1>Приглашения в команду</h1>
+    <h1 align="center">Приглашения в команду</h1>
     {% for invitation in invitations %}
         <div class="card-inner-container">
             <h2 class="card-header">
@@ -30,6 +30,10 @@
                 <a>
             {% endif %}
         </div>
+    {% empty %}
+    <h1 align="center">
+        <font color="#cc4848">Нет приглашений</font>
+    </h1>
     {% endfor %}
 </div>
 {% endblock %}

@@ -537,3 +537,20 @@ class EditTournamentNewsView(LoginRequiredMixin, views.View):
             "tournaments:tournament_news",
             tournament_id=tournament_id,
         )
+
+
+class ManageJudgesTournament(LoginRequiredMixin, views.View):
+    def get(self, request, tournament_id):
+        tournament = (
+            TournamentModel.objects.filter(
+                id=tournament_id,
+            )
+            .prefetch_related("judges")
+            .first()
+        )
+
+        judges = tournament.judges.all()
+        
+        context = {
+            "judges": judges,
+        }

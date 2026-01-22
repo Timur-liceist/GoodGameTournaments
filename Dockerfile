@@ -1,27 +1,31 @@
-# Используем официальный образ Python
-FROM python:3.12-slim
+FROM python:3.11-slim
 
-# Установим необходимые системные зависимости
-RUN apt-get update && apt-get install -y \
-    gcc \
-    python3-dev \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Рабочая директория в контейнере
-WORKDIR /app
+WORKDIR /home/app
 
-# Копируем pyproject.toml и poetry.lock
-COPY pyproject.toml poetry.lock ./
+# Создаём пользователя
+RUN useradd --create-home --shell /bin/bash app
 
-# Устанавливаем Poetry
-RUN pip install --no-cache-dir poetry
+# Копируем зависимости и устанавливаем
+COPY requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Устанавливаем зависимости проекта через Poetry
-RUN poetry config virtualenvs.create false && \
-    poetry install --no-interaction --no-ansi
-
-# Копируем исходный код проекта
+# Копируем всё
 COPY . .
 
-# Укажем команду запуска сервера
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "django_project.wsgi:application"]
+# Гарантируем существование папки logs
+RUN mkdir -p /home/app/django_project/logs
+
+# Назначаем владельца
+RUN chown -R app:app /home/app
+
+USER app
+
+EXPOSE 8000
+
+CMD ["python", "django_project/manage.py", "runserver", "0.0.0.0:8000"]
