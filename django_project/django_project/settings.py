@@ -25,6 +25,15 @@ print("SECRET_KEY", SECRET_KEY)
 ALLOWED_HOSTS = [
     "*",
 ]
+RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+# Добавляем домен Render
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    ALLOWED_HOSTS.append("https://" + RENDER_EXTERNAL_HOSTNAME)
+    CSRF_TRUSTED_ORIGINS = [f"https://{RENDER_EXTERNAL_HOSTNAME}", "*"]
+
+# Также добавьте localhost для локальной разработки
+ALLOWED_HOSTS.extend(["localhost", "127.0.0.1"])
 
 
 INSTALLED_APPS = [
@@ -142,12 +151,11 @@ SOCIAL_AUTH_PIPELINE = (
     "users.pipeline.redirect_with_steam_id",
 )
 SOCIAL_AUTH_PIPELINE = (
-    'social_core.pipeline.social_auth.social_details',
-    'social_core.pipeline.social_auth.social_uid',
-    'social_core.pipeline.social_auth.auth_allowed',
-    'social_core.pipeline.social_auth.load_extra_data',
-
-    'users.pipeline.redirect_with_steam_id',
+    "social_core.pipeline.social_auth.social_details",
+    "social_core.pipeline.social_auth.social_uid",
+    "social_core.pipeline.social_auth.auth_allowed",
+    "social_core.pipeline.social_auth.load_extra_data",
+    "users.pipeline.redirect_with_steam_id",
 )
 
 
