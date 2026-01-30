@@ -42,6 +42,11 @@ urlpatterns = [
         name="create_battle",
     ),
     path(
+        "<int:tournament_id>/manage/judges",
+        views.ManageJudgesView.as_view(),
+        name="manage_tournament_judges",
+    ),
+    path(
         "tournament_reg_is_closed",
         TemplateView.as_view(
             template_name="includes/error.html",

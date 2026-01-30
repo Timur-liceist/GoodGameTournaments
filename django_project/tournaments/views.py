@@ -45,6 +45,10 @@ class TournamentCreateView(LoginRequiredMixin, views.View):
             tournament.owner = request.user
             tournament.save()
 
+            # Сразу делаем создателя турнира судьёй
+            tournament.judges.add(request.user.id)
+            tournament.save()
+
         return redirect("tournaments:all_tournaments")
 
 
@@ -187,9 +191,6 @@ class BattleCreateView(LoginRequiredMixin, views.View):
             )
             .prefetch_related(
                 "judges",
-            )
-            .prefetch_related(
-                "memberships_by_tournament",
             )
             .first()
         )
@@ -539,7 +540,7 @@ class EditTournamentNewsView(LoginRequiredMixin, views.View):
         )
 
 
-class ManageJudgesTournament(LoginRequiredMixin, views.View):
+class ManageJudgesView(LoginRequiredMixin, views.View):
     def get(self, request, tournament_id):
         tournament = (
             TournamentModel.objects.filter(
@@ -550,7 +551,13 @@ class ManageJudgesTournament(LoginRequiredMixin, views.View):
         )
 
         judges = tournament.judges.all()
-        
+
         context = {
             "judges": judges,
         }
+
+        return render(
+            request=request,
+            template_name="tournaments/manage_tournament_judges.html",
+            context=context,
+        )

@@ -580,6 +580,20 @@ files = [
 django = ">=4.2"
 
 [[package]]
+name = "dotenv"
+version = "0.9.9"
+description = "Deprecated package"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "dotenv-0.9.9-py2.py3-none-any.whl", hash = "sha256:29cf74a087b31dafdb5a446b6d7e11cbce8ed2741540e2339c69fbef92c94ce9"},
+]
+
+[package.dependencies]
+python-dotenv = "*"
+
+[[package]]
 name = "gunicorn"
 version = "23.0.0"
 description = "WSGI HTTP Server for UNIX"
@@ -1014,4 +1028,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "56a6315d29585de38b27dc38aa11258fca38ac1ef186d92cb57f664097902f9d"
+content-hash = "0f4fa5575847f3bd269e51b0612337bc4acc38fb5f8430a4f5fa46b7ed651a30"

@@ -1,9 +1,12 @@
-{% extends "includes/base.html" %}
-{% block title %}Создание турнира{% endblock %}
-
-{% block content %}
+{% extends "includes/base.html" %} {% block title %}Создание новости 
+{% endblock %} {% block content %} {% load markdown_filters %}
 <div class="card-container">
-    <a>
-        <
-</div>
+    {% include "includes/tabs_manage_tournament.html" with tournament_id=tournament_id%}
+    {% for judge in judges %}
+        <div class="card-container-inner" >
+            <h2>{{ judge.username }}<h2>
+        </div>
+    {% endfor %}
+<div>
+
 {% endblock %}
