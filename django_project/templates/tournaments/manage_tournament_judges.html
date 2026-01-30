@@ -1,10 +1,12 @@
 {% extends "includes/base.html" %} {% block title %}Создание новости 
 {% endblock %} {% block content %} {% load markdown_filters %}
 <div class="card-container">
-    {% include "includes/tabs_manage_tournament.html" with tournament_id=tournament_id%}
+    {% include "includes/tabs_manage_tournament.html" with tournament_id=tournament_id %}
+    <h1>Судьи турнира</h1>
+    <hr class="card-hr">
     {% for judge in judges %}
-        <div class="card-container-inner" >
-            <h2>{{ judge.username }}<h2>
+        <div class="card-container-inner" align="center">
+            <h3 class="card-header" style="width: 80%"><a class="card-link" href="{% url 'users:profile' user_id=judge.id %}">{{ judge.username }}</a><h2>
         </div>
     {% endfor %}
 <div>

@@ -143,6 +143,7 @@ class ProfileView(View):
         context = {
             "form": form,
             "is_owner": is_owner,
+            "steamid64_of_user": user_for_update.steamid64,
         }
         return render(
             request,
@@ -173,6 +174,7 @@ class ProfileView(View):
         context = {
             "form": form,
             "is_owner": True,
+            "steamid64_of_user": user_for_update.steamid64,
         }
         return render(
             request,

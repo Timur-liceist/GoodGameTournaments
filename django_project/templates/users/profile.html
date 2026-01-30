@@ -4,6 +4,11 @@
 {% load widget_tweaks %}
 <div class="card-container container mt-5" style="color: white; border: 2px solid #cc4848; padding: 20px">
   <h1 class="text-center mb-4">Профиль</h1>
+  <a href="https://steamcommunity.com/profiles/{{ steamid64_of_user}}">
+    <button class="card-button w-100">
+      Профиль Steam
+    </button>
+  </a>
   <form method="post">
     {% csrf_token %}
 

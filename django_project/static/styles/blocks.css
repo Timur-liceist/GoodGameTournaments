@@ -73,7 +73,7 @@
     border: 1.5px solid #cc4848;
     color: #ffffff;
     font-weight: 500;
-    font-size: 18px;
+    /* font-size: 18px; */
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
 
     /* Гарантируем, что содержимое не выйдет за границы */

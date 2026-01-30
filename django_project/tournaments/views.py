@@ -554,6 +554,7 @@ class ManageJudgesView(LoginRequiredMixin, views.View):
 
         context = {
             "judges": judges,
+            "tournament_id": tournament_id,
         }
 
         return render(
