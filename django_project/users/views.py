@@ -129,12 +129,12 @@ class LogoutView(View):
 class ProfileView(View):
     def get(self, request, user_id):
         user_for_update = get_object_or_404(UserModel, id=user_id)
-        is_owner = False
+        is_owner_profile = False
 
         if request.user == user_for_update or request.user.is_superuser:
-            is_owner = True
+            is_owner_profile = True
 
-        if not is_owner and not user_for_update.is_public_profile:
+        if not is_owner_profile and not user_for_update.is_public_profile:
             return redirect("users:not_public_profile")
 
         form = ProfileForm(
@@ -142,7 +142,7 @@ class ProfileView(View):
         )
         context = {
             "form": form,
-            "is_owner": is_owner,
+            "is_owner_profile": is_owner_profile,
             "steamid64_of_user": user_for_update.steamid64,
         }
         return render(

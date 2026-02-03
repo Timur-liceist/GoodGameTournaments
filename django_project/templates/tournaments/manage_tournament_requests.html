@@ -3,7 +3,6 @@
 <div class="card-container">
     {% include "includes/tabs_manage_tournament.html" with tournament_id=tournament_id%}
     {% for request_team_tournament in all_team_member_requests %}
-        <div class="card-inner-container">
             <h2 class="card-header">
                 <span class="header-username">{{ request_team_tournament.team.name }}</span>
                 <span class="header-status" request_id={{request_team_tournament.id}}>{{ request_team_tournament.get_status_display }}</span>
@@ -22,7 +21,6 @@
                 {% else %}
                 {% endif %}
             </h2>
-        </div>
     {% endfor %}
 <div>
 

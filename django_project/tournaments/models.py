@@ -216,4 +216,3 @@ class BattleModel(models.Model):
     def __str__(self):
         return f"{self.tournament} {self.created_at} {self.status}"
 
-

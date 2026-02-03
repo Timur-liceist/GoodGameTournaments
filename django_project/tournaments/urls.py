@@ -38,13 +38,28 @@ urlpatterns = [
     ),
     path(
         "<int:tournament_id>/manage/battles/create",
-        views.BattleCreateView.as_view(),
+        views.CreateBattleView.as_view(),
         name="create_battle",
+    ),
+    path(
+        "<int:tournament_id>/manage/battles/<int:battle_id>/edit",
+        views.EditBattleView.as_view(),
+        name="edit_battle",
+    ),
+    path(
+        "<int:tournament_id>/manage/battles/<int:battle_id>/remove",
+        views.DeleteBattleView.as_view(),
+        name="delete_battle",
     ),
     path(
         "<int:tournament_id>/manage/judges",
         views.ManageJudgesView.as_view(),
         name="manage_tournament_judges",
+    ),
+    path(
+        "<int:tournament_id>/manage/judges/<int:user_id>/remove",
+        views.JudgeDeleteView.as_view(),
+        name="remove_judge",
     ),
     path(
         "tournament_reg_is_closed",

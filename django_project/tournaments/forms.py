@@ -121,7 +121,9 @@ class BattleForm(forms.ModelForm):
                 "type": "datetime-local",
                 "placeholder": "Выберите дату и время",
             },
+            format="%Y-%m-%dT%H:%M",
         ),
+        input_formats=["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M", "%d.%m.%Y %H:%M"],
     )
 
     def set_team_selecting(
@@ -143,9 +145,7 @@ class BattleForm(forms.ModelForm):
         ]
 
 
-
 class TournamentNewsForm(forms.ModelForm):
-
     class Meta:
         model = TournamentNewsModel
 

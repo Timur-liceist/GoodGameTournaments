@@ -84,4 +84,4 @@ class UserModel(AbstractUser):
         verbose_name_plural = "пользователи"
 
     def __str__(self):
-        return f"{self.username}<{self.email}>"
+        return f"{self.username}"

@@ -16,6 +16,10 @@
                 <th>Вторая команда</th>
                 <th>Судья</th>
                 <th>Статус</th>
+                {% if is_owner_tournament %}
+                <th></th>
+                <th></th>
+                {% endif %}
             </tr>
             </thead>
             <tbody>
@@ -38,6 +42,22 @@
                             </a>
                         </td>
                         <td>{{ battle.get_status_display }}</td>
+                        {% if is_owner_tournament %}
+                        <td>
+                            <a href="{% url 'tournaments:edit_battle' tournament_id=tournament_id battle_id=battle.id %}">
+                                <button class="card-button w-100">
+                                    Редактировать
+                                </button>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'tournaments:delete_battle' tournament_id=tournament_id battle_id=battle.id %}">
+                                <button class="card-button w-100">
+                                    Удалить
+                                </button>
+                            </a>
+                        </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

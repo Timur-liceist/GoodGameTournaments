@@ -183,7 +183,7 @@ class ManageTournamentBattles(LoginRequiredMixin, views.View):
         )
 
 
-class BattleCreateView(LoginRequiredMixin, views.View):
+class CreateBattleView(LoginRequiredMixin, views.View):
     def get(self, request, tournament_id):
         tournament = (
             TournamentModel.objects.filter(
@@ -195,10 +195,11 @@ class BattleCreateView(LoginRequiredMixin, views.View):
             .first()
         )
 
-        if not is_owner_tournament(
+        is_owner = is_owner_tournament(
             tournament=tournament,
             user=request.user,
-        ):
+        )
+        if not is_owner:
             return redirect("forbidden")
 
         form = BattleForm()
@@ -209,19 +210,21 @@ class BattleCreateView(LoginRequiredMixin, views.View):
         )
         context = {
             "form": form,
+            "is_owner_tournament": is_owner,
         }
 
         return render(
             request=request,
             context=context,
-            template_name="tournaments/create_battle.html",
+            template_name="tournaments/edit_battle.html",
         )
 
     def post(self, request, tournament_id):
-        if not is_owner_tournament(
-            tournamen_id=tournament_id,
+        is_owner = is_owner_tournament(
+            tournament_id=tournament_id,
             user=request.user,
-        ):
+        )
+        if not is_owner:
             return redirect("forbidden")
 
         form = BattleForm(request.POST)
@@ -231,15 +234,85 @@ class BattleCreateView(LoginRequiredMixin, views.View):
             new_battle.tournament_id = tournament_id
             new_battle.save()
 
-            return redirect("homepage")
-
+            return redirect(
+                "tournaments:manage_tournament_battles",
+                tournament_id=tournament_id,
+            )
         context = {
             "form": form,
+            "is_owner": is_owner,
         }
         return render(
             request=request,
             context=context,
-            template_name="tournaments/create_battle.html",
+            template_name="tournaments/edit_battle.html",
+        )
+
+
+class EditBattleView(LoginRequiredMixin, views.View):
+    def get(self, request, tournament_id, battle_id):
+        is_owner = is_owner_tournament(
+            tournament_id=tournament_id,
+            user=request.user,
+        )
+        if not is_owner:
+            return redirect("forbidden")
+
+        battle = BattleModel.objects.filter(
+            id=battle_id,
+        ).first()
+
+        form = BattleForm(instance=battle)
+
+        context = {
+            "form": form,
+        }
+
+        return render(
+            request=request,
+            template_name="tournaments/edit_battle.html",
+            context=context,
+        )
+
+    def post(self, request, tournament_id, battle_id):
+        is_owner = is_owner_tournament(
+            tournament_id=tournament_id,
+            user=request.user,
+        )
+        if not is_owner:
+            return redirect("forbidden")
+
+        battle = BattleModel.objects.filter(
+            id=battle_id,
+        ).first()
+
+        form = BattleForm(request.POST, instance=battle)
+
+        if form.is_valid():
+            form.save()
+
+        return redirect(
+            "tournaments:manage_tournament_battles",
+            tournament_id=tournament_id,
+        )
+
+
+class DeleteBattleView(LoginRequiredMixin, views.View):
+    def get(self, request, tournament_id, battle_id):
+        is_owner = is_owner_tournament(
+            tournament_id=tournament_id,
+            user=request.user,
+        )
+        if not is_owner:
+            return redirect("forbidden")
+
+        BattleModel.objects.filter(
+            id=battle_id,
+        ).delete()
+
+        return redirect(
+            "tournaments:manage_tournament_battles",
+            tournament_id=tournament_id,
         )
 
 
@@ -540,6 +613,7 @@ class EditTournamentNewsView(LoginRequiredMixin, views.View):
         )
 
 
+# Страница управления судьями турнира
 class ManageJudgesView(LoginRequiredMixin, views.View):
     def get(self, request, tournament_id):
         tournament = (
@@ -561,4 +635,46 @@ class ManageJudgesView(LoginRequiredMixin, views.View):
             request=request,
             template_name="tournaments/manage_tournament_judges.html",
             context=context,
+        )
+
+
+# Удаление судьи из турнира
+class JudgeDeleteView(LoginRequiredMixin, views.View):
+    def get(self, request, tournament_id, user_id):
+        if not is_owner_tournament(
+            tournament_id=tournament_id,
+            user=request.user,
+        ):
+            return redirect("forbidden")
+
+        tournament = TournamentModel.objects.filter(
+            id=tournament_id,
+        ).first()
+
+        tournament.judges.remove(user_id)
+
+        return redirect(
+            "tournaments:manage_tournament_judges",
+            tournament_id=tournament_id,
+        )
+
+
+# Добавление судьи в турнир
+class AddJudgeView(LoginRequiredMixin, views.View):
+    def get(self, request, tournament_id, user_id):
+        if not is_owner_tournament(
+            tournament_id=tournament_id,
+            user=request.user,
+        ):
+            return redirect("forbidden")
+
+        tournament = TournamentModel.objects.filter(
+            id=tournament_id,
+        ).first()
+
+        tournament.judges.add(user_id)
+
+        return redirect(
+            "tournaments:manage_tournament_judges",
+            tournament_id=tournament_id,
         )
